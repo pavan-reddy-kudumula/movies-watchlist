@@ -1,0 +1,121 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  background-color: var(--card-bg);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
+.auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+.error {
+  color: var(--error-color);
+  background-color: var(--error-background-color);
+  border-left: 4px solid var(--error-color);
+  padding: 12px;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1.75rem;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+}
+
+html.dark-mode .input:focus {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+
+.label {
+  position: absolute;
+  left: 10px;
+  top: 13px;
+  color: var(--label-color);
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+  background-color: var(--card-bg);
+  padding: 0 5px;
+}
+
+.input:focus + .label,
+.input:valid + .label
+{
+  top: -10px;
+  left: 8px;
+  font-size: 0.8rem;
+  color: var(--primary-color);
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.auth-btn:hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-1px);
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--label-color);
+}
+
+.switch-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.switch-link a:hover {
+  text-decoration: underline;
+}

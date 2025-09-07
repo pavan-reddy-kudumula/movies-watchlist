@@ -1,0 +1,48 @@
+/* --- Main Profile Container --- */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 80vh;
+}
+
+/* --- Profile Card Styling --- */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--box-shadow);
+  padding: 2.5rem 3rem;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+/* --- Header section with the welcome message --- */
+.profile-header h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(to right, #8b5cf6, #6d28d9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+html.dark-mode .profile-header h2 {
+  background: linear-gradient(to right, #a78bfa, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* --- Kicker text for the email --- */
+.kicker {
+  font-size: 1.1rem;
+  color: var(--label-color);
+  margin-top: 0.5rem;
+  letter-spacing: 0.5px;
+}

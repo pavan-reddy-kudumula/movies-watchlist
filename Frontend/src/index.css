@@ -1,0 +1,81 @@
+/* src/index.css */
+
+/* --- Light Mode & Global Variables --- */
+:root {
+  /* Primary Colors */
+  --primary-color: #6d28d9;
+  --primary-hover-color: #5b21b6;
+
+  /* Background Colors */
+  --body-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --nav-bg: #ffffff;
+  --nav-link-hover-bg: #f3f4f6;
+  --input-bg: #ffffff;
+
+  /* Text Colors */
+  --text-color: #111827;
+  --nav-text: #333333;
+  --nav-logo-text: var(--primary-color);
+  --label-color: #6b7280;
+
+  /* Border & Shadow */
+  --border-color: #d1d5db;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --input-focus-border: var(--primary-color);
+
+  /* Utility Colors */
+  --slider-bg: #ccc;
+  --slider-checked-bg: var(--primary-color);
+  --error-color: #ef4444;
+  --error-background-color: #fee2e2;
+  --delete-btn-bg: #ef4444;
+  --delete-btn-hover-bg: #dc2626;
+}
+
+/* --- Dark Mode Overrides --- */
+html.dark-mode {
+  /* Primary Colors */
+  --primary-color: #8b5cf6;
+  --primary-hover-color: #7c3aed;
+  
+  /* Background Colors */
+  --body-bg: #111827;
+  --card-bg: #1f2937;
+  --nav-bg: #1f2937;
+  --nav-link-hover-bg: #374151;
+  --input-bg: #374151;
+  
+  /* Text Colors */
+  --text-color: #f9fafb;
+  --nav-text: #f9fafb;
+  --nav-logo-text: #a78bfa;
+  --label-color: #9ca3af;
+  
+  /* Border & Shadow */
+  --border-color: #4b5563;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --input-focus-border: var(--primary-color);
+
+  /* Utility Colors */
+  --slider-bg: #4b5563;
+  --slider-checked-bg: var(--primary-color);
+  --error-color: #f87171;
+  --error-background-color: #452323;
+  --delete-btn-bg: #f87171;
+  --delete-btn-hover-bg: #ef4444;
+}
+
+/* --- Global Body Styles --- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.no-transition * {
+  transition: none !important;
+}
