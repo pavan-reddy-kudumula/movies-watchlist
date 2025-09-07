@@ -6,10 +6,8 @@ import UserModel from "../models/User.js"
 import MovieModel from "../models/Movie.js"
 import authMiddleware from "./auth.js"
 import axios from "axios"
-import dotenv from "dotenv"
-dotenv.config()
 
-const JWT_SECRET = "p123475@#@$%&!90671237ghsvqVDJ2IE08WSN"
+const JWT_SECRET = process.env.JWT_SECRET
 const API_KEY = process.env.API_KEY;
 const url = `http://www.omdbapi.com/?apikey=${API_KEY}&t=`;
 
