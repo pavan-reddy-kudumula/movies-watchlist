@@ -8,7 +8,8 @@ const app = express()
 const MONGO_URI = process.env.MONGO_URI
 const PORT = process.env.PORT
 
-app.use(cors())
+app.use(cors({
+  origin: '*'}))
 app.use(express.json())
 app.use("/", router)
 
