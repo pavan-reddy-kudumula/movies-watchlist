@@ -9,7 +9,7 @@ const MONGO_URI = process.env.MONGO_URI
 const PORT = process.env.PORT
 
 app.use(cors({
-  origin: 'movies-watchlist-r4oripc1z-pavan-reddy-s-projects.vercel.app'}))
+  origin: 'https://movies-watchlist-blond.vercel.app/'}))
 app.use(express.json())
 app.use("/", router)
 
