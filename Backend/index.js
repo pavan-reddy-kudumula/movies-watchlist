@@ -8,8 +8,22 @@ const app = express()
 const MONGO_URI = process.env.MONGO_URI
 const PORT = process.env.PORT
 
+const allowedOrigins = [
+  'https://movies-watchlist-blond.vercel.app'
+];
+
 app.use(cors({
-  origin: 'https://movies-watchlist-blond.vercel.app/'}))
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); 
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = `CORS policy blocks this origin`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
 app.use(express.json())
 app.use("/", router)
 
