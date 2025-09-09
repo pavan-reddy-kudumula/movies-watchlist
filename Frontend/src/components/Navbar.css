@@ -181,6 +181,9 @@ input:checked + .slider:before {
     top: 1rem;
     right: 1rem;
     margin-left: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
   }
 
   .logo {

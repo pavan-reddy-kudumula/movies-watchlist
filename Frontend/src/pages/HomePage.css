@@ -191,7 +191,7 @@ html.dark-mode .action-card:hover {
   }
 
   .cta-button {
-    width: 100%;
+    width: auto;
     max-width: 320px;
   }
   
