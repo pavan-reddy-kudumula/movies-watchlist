@@ -1,5 +1,5 @@
 import {useState, useContext} from "react"
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import API from "../api"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -12,7 +12,7 @@ function Login(){
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext)
+    const { user,login } = useContext(AuthContext)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -38,6 +38,8 @@ function Login(){
     }
 
     return(
+        <>
+        {!user ? (
         <div className="auth-container">
             <div className="auth-card">
                 <h2 className="auth-title">Login</h2>
@@ -46,12 +48,12 @@ function Login(){
 
                 <form onSubmit={handleSubmit}>
                 <div className="input-group">
-                    <input className="input" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+                    <input className="input" type="email" name="email" value={email} placeholder=" " onChange={(e) => setEmail(e.target.value)} required/>
                     <label className="label">Email</label>
                 </div>
 
                 <div className="input-group">
-                    <input className="input" type="password" name="email" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                    <input className="input" type="password" name="password" value={password} placeholder=" " onChange={(e) => setPassword(e.target.value)} required/>
                     <label className="label">Password</label>
                 </div>
 
@@ -68,7 +70,8 @@ function Login(){
                 </p>
             </div>
             <ToastContainer position="top-right" autoClose={3000} />
-        </div>
+        </div>) : (<Navigate to="/" />)}
+        </>
     )
 }
 

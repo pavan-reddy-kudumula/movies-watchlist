@@ -77,7 +77,7 @@ html.dark-mode .input:focus {
 }
 
 .input:focus + .label,
-.input:valid + .label
+.input:not(:placeholder-shown) + .label
 {
   top: -10px;
   left: 8px;

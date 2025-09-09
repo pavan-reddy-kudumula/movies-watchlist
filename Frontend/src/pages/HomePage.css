@@ -1,47 +1,182 @@
-.homepage {
-flex: 1;
-max-width: 800px;
-margin: 0 auto;
-padding: 30px 20px;
-background: var(--card-bg);
-border-radius: 10px;
-box-shadow: var(--box-shadow);
+/* HomePage.css */
+
+/* Main layout container for the page */
+.home-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-
-section {
-margin-bottom: 40px;
+/* --- Hero Section --- */
+.hero-section {
+  padding: 0.5rem 1rem; /* Reduced from 4rem */
+  margin-bottom: 1.5rem; /* Reduced from 4rem */
 }
 
-
-h2 {
-color: var(--primary-color);
-margin-bottom: 10px;
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-color);
+  margin-bottom: 1rem;
 }
 
-
-p {
-line-height: 1.6;
-color: var(--text-color);
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--label-color); /* Use a softer color for the subtitle */
+  max-width: 600px;
+  margin: 0 auto 2.5rem auto;
 }
 
-
-ul {
-list-style: none;
-padding: 0;
+/* --- Call to Action Buttons --- */
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
-
-li {
-margin-bottom: 8px;
+.cta-button {
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
+.cta-button:hover {
+  transform: translateY(-2px);
+}
 
-.homepage-footer {
-text-align: center;
-padding: 15px;
-font-size: 0.9rem;
-background: var(--nav-bg);
-border-top: 1px solid var(--border-color);
-color: var(--label-color);
+/* Primary Button Style (matches your auth button) */
+.cta-button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.cta-button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+/* Secondary Button Style (for Login) */
+.cta-button.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color) inset;
+}
+
+.cta-button.secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* --- Features Section --- */
+.features-section {
+  padding: 0.5rem 0; /* Reduced from 2rem */
+}
+
+.section-title {
+  font-size: 2.25rem;
+  color: var(--text-color);
+  margin-bottom: 2.5rem;
+  font-weight: 700;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+/* Individual Feature Cards */
+.feature-card {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.feature-card p {
+  color: var(--label-color);
+  line-height: 1.6;
+}
+
+/* --- Footer --- */
+.home-footer {
+  margin-top: 2rem; /* Reduced from 4rem */
+  border-top: 1px solid var(--border-color);
+  color: var(--label-color);
+  font-size: 0.9rem;
+}
+/* HomePage.css */
+
+/* --- STYLES FOR LOGGED-IN VIEW --- */
+/* Add this to the end of your existing file */
+
+.logged-in-hero {
+  padding: 4rem 1rem;
+}
+
+.welcome-message {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.action-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  text-decoration: none;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+html.dark-mode .action-card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.action-card h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.action-card p {
+  color: var(--label-color);
+  line-height: 1.6;
+}
+
+/* Responsive adjustments for the logged-in view */
+@media (max-width: 600px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-message {
+    font-size: 2rem;
+  }
 }

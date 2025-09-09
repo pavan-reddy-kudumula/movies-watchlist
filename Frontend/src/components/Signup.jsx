@@ -1,8 +1,9 @@
-import {useState} from "react"
+import {useState, useContext} from "react"
 import API from "../api"
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {useNavigate, Link} from "react-router-dom"
+import {useNavigate, Link, Navigate} from "react-router-dom"
+import {AuthContext} from "../context/AuthContext"
 import "./AuthForm.css"
 
 function Signup(){
@@ -11,6 +12,7 @@ function Signup(){
     const [password, setPassword] = useState("");  
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);  
+    const {user} = useContext(AuthContext)
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -37,6 +39,7 @@ function Signup(){
     }
 
     return(
+        <>{!user ? (
         <div className="auth-container">
             <div className="auth-card">
                 <h2 className="auth-title">Sign up</h2>
@@ -45,17 +48,17 @@ function Signup(){
 
                 <form onSubmit={handleSubmit}>
                 <div className="input-group">
-                    <input className="input" type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required/>
+                    <input className="input" type="text" name="username" value={username} placeholder=" " onChange={(e) => setUsername(e.target.value)} required/>
                     <label className="label">Username</label>
                 </div>
 
                 <div className="input-group">
-                    <input className="input" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+                    <input className="input" type="email" name="email" value={email} placeholder=" " onChange={(e) => setEmail(e.target.value)} required/>
                     <label className="label">Email</label>
                 </div>
 
                 <div className="input-group">
-                    <input className="input" type="password" name="email" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                    <input className="input" type="password" name="password" value={password} placeholder=" " onChange={(e) => setPassword(e.target.value)} required/>
                     <label className="label">Password</label>
                 </div>
 
@@ -72,7 +75,7 @@ function Signup(){
             </div>
 
             <ToastContainer position="top-right" autoClose={3000} />
-        </div>
+        </div>) : (<Navigate to="/" />)}</>
     )
 }
 

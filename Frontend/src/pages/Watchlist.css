@@ -62,15 +62,15 @@
   z-index: 1;
 }
 
-.flip-card-front .card-title {
+/* .flip-card-front .card-title {
   position: relative;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.7);
+  background: linear-gradient(to right, #a78bfa, #8b5cf6);
   padding: 0.75rem;
   margin: 0;
   font-size: 1.1rem;
-  color: #ffffff;
-}
+  color: black;
+} */
 
 /* --- Back Side of the Card (Details) --- */
 .flip-card-back {

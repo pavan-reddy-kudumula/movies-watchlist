@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+// Import NavLink instead of Link to handle active styles
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext.jsx"; //
+import { useTheme } from "../context/ThemeContext.jsx";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -10,54 +11,44 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* Brand / Logo */}
       <span className="logo">Movies Watchlist</span>
 
-      {/* Links */}
+      {/* Centered navigation links */}
       <ul>
-        {!user ? (
+        {/* Use NavLink for all links. The "end" prop on Home is important! */}
+        <li><NavLink to="/" end>Home</NavLink></li>
+        {user ? (
           <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/signup">Sign up</Link>
-            </li>
+            <li><NavLink to="/profile">Profile</NavLink></li>
+            <li><NavLink to="/addmovies">Add movies</NavLink></li>
+            <li><NavLink to="/watchlist">Watchlist</NavLink></li>
           </>
         ) : (
           <>
-            <li>
-              <Link to="/profile">Profile</Link>
-            </li>
-            <li>
-              <Link to="/addmovies">AddMovies</Link>
-            </li>
-            <li>
-              <Link to="/watchlist">Watchlist</Link>
-            </li>
-            <li>
-              <button className="auth-btn" onClick={logout}>
-                Logout
-              </button>
-            </li>
+            <li><NavLink to="/login">Login</NavLink></li>
+            <li><NavLink to="/signup">Sign up</NavLink></li>
           </>
         )}
       </ul>
 
-      {/* Toggle Switch */}
-      <div className="toggle-container">
-        <span className="toggle-label">{darkMode ? "Dark" : "Light"}</span>
-        <label className="toggle-switch">
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={toggleDarkMode}
-          />
-          <span className="slider"></span>
-        </label>
+      {/* Group all actions (toggle, buttons) on the right side */}
+      <div className="navbar-actions">
+        <div className="toggle-container">
+          <span className="toggle-label">{darkMode ? "Dark" : "Light"}</span>
+          <label className="toggle-switch">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={toggleDarkMode}
+            />
+            <span className="slider"></span>
+          </label>
+        </div>
+        {user && (
+          <button className="auth-btn" onClick={logout}>
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );

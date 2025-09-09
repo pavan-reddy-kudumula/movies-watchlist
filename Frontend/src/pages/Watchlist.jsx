@@ -41,7 +41,7 @@ function Watchlist()
               <div key={index} className="flip-card">
                 <div className="flip-card-inner">
                   <div className="flip-card-front">
-                    <h3 className="card-title">{movie.title}</h3>
+                    {/* <h3 className="card-title">{movie.title}</h3> */}
                     <img src={movie.poster} alt={movie.title} />
                   </div>
                   <div className="flip-card-back">
@@ -58,7 +58,7 @@ function Watchlist()
               </div>
             ))}
         </div>) :
-         (<Navigate to="/login" />)}
+         (<Navigate to="/" />)}
       </>
       )
 }

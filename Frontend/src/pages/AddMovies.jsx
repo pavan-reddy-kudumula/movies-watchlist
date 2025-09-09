@@ -30,7 +30,7 @@ const AddMovies = () => {
           <input type="text" value={inputText} onChange={(e) => setinputText(e.target.value)} placeholder="Enter movie name"/>
           <button onClick={addMovie}>Add</button>
         </div>
-      </div>) : (<Navigate to="/login" />)}
+      </div>) : (<Navigate to="/" />)}
     </>
   );
 };

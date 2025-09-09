@@ -12,12 +12,12 @@ function Profile() {
             {user ? (
             <>
                 <div className="profile-header">
-                    <h2>Welcome, {user.username}</h2>
+                    <h2>username: {user.username}</h2>
+                    <h2>email: {user.email}</h2>
                 </div>
-                <p className="kicker">{user.email}</p>
             </>
             ) : (
-                <Navigate to="/login" />
+                <Navigate to="/" />
             )}
         </div>
         </div>
