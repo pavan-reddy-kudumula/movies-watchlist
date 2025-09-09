@@ -79,3 +79,11 @@ body {
 .no-transition * {
   transition: none !important;
 }
+
+/* --- Responsive Typography --- */
+@media (max-width: 768px) {
+  /* Reduce base font size on smaller screens */
+  html {
+    font-size: 15px;
+  }
+}

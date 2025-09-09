@@ -119,3 +119,16 @@ html.dark-mode .input:focus {
 .switch-link a:hover {
   text-decoration: underline;
 }
+
+/* ... (all your existing styles from the file) ... */
+
+/* --- Responsive Styles --- */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 25px;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
+  }
+}

@@ -46,3 +46,20 @@ html.dark-mode .profile-header h2 {
   margin-top: 0.5rem;
   letter-spacing: 0.5px;
 }
+
+/* ... (all your existing styles from the file) ... */
+
+/* --- Responsive Styles --- */
+@media (max-width: 600px) {
+  .card {
+    padding: 2rem 1.5rem;
+  }
+
+  .profile-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .kicker {
+    font-size: 1rem;
+  }
+}

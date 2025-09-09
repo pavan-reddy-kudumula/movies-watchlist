@@ -66,3 +66,27 @@ html.dark-mode .input-container input:focus {
 .input-container button:hover {
   background-color: var(--primary-hover-color);
 }
+
+/* ... (all your existing styles from the file) ... */
+
+/* --- Responsive Styles --- */
+@media (max-width: 600px) {
+  .add-movies-container h1 {
+    font-size: 2rem;
+  }
+
+  .input-container {
+    flex-direction: column;
+    box-shadow: none; /* Remove shadow on mobile for a flatter look */
+  }
+
+  .input-container input {
+    border-radius: 10px; /* Full radius when stacked */
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .input-container button {
+    border-radius: 10px; /* Full radius when stacked */
+  }
+}

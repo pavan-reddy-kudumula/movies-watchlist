@@ -118,3 +118,13 @@
 .flip-card-back button:hover {
   background-color: var(--delete-btn-hover-bg);
 }
+
+/* ... (all your existing styles from the file) ... */
+
+/* --- Responsive Styles --- */
+@media (max-width: 600px) {
+  .movie-list {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}

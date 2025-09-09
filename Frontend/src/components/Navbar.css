@@ -152,3 +152,38 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(24px);
 }
+
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .navbar ul {
+    order: 3; /* Make links appear last */
+    margin: 1rem 0 0 0;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .navbar ul a {
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  .navbar-actions {
+    /* Position actions at the top right */
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    margin-left: 0;
+  }
+
+  .logo {
+    margin-bottom: 0;
+  }
+}

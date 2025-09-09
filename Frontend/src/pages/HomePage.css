@@ -170,13 +170,45 @@ html.dark-mode .action-card:hover {
   line-height: 1.6;
 }
 
-/* Responsive adjustments for the logged-in view */
-@media (max-width: 600px) {
-  .quick-actions {
-    grid-template-columns: 1fr;
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
   }
 
+  /* Logged-Out View */
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-button {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  /* Logged-In View */
+  .logged-in-hero {
+    padding: 2rem 0;
+  }
+  
   .welcome-message {
     font-size: 2rem;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
   }
 }
