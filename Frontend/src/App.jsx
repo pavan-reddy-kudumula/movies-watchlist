@@ -6,13 +6,14 @@ import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import AddMovies from "./pages/AddMovies"
 import Watchlist from "./pages/Watchlist"
+import HomePage from "./pages/Homepage"
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={
