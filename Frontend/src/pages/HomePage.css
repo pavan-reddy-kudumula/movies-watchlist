@@ -1,84 +1,75 @@
+/* Default light mode */
 .homepage {
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f9fafb;
+  color: #1f2937;
+  transition: background 0.3s, color 0.3s;
 }
-
-/* dark mode */
-.homepage.dark {
-background: linear-gradient(180deg, #0a0f1f 0%, #111827 100%);
-color: #f0f4f8;
-}
-
-
-/* Light mode */
-.homepage.light {
-background: #f9fafb;
-color: #1f2937;
-}
-
 
 .homepage-header {
-padding: 20px;
-text-align: center;
-background: rgba(0, 0, 0, 0.05);
-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-position: relative;
+  padding: 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-
 
 .homepage-title {
-margin: 0;
-font-size: 2.2rem;
-font-weight: bold;
-color: #ff6b6b;
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #ff6b6b;
 }
-
-
-.toggle-btn {
-position: absolute;
-right: 20px;
-top: 20px;
-background: transparent;
-border: 1px solid currentColor;
-border-radius: 6px;
-padding: 6px 10px;
-cursor: pointer;
-font-size: 0.9rem;
-}
-
 
 .homepage-main {
-flex: 1;
-max-width: 800px;
-margin: 0 auto;
-padding: 30px 20px;
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
 }
-
 
 section {
-margin-bottom: 40px;
+  margin-bottom: 40px;
 }
-
 
 h2 {
-color: #ff6b6b;
-margin-bottom: 10px;
+  color: #ff6b6b;
+  margin-bottom: 10px;
 }
-
 
 p {
-line-height: 1.6;
+  line-height: 1.6;
 }
-
 
 ul {
-list-style: none;
-padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
-
 li {
+  margin-bottom: 8px;
+}
+
+.homepage-footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode override (when body or root has .dark class) */
+body.dark .homepage {
+  background: linear-gradient(180deg, #0a0f1f 0%, #111827 100%);
+  color: #f0f4f8;
+}
+
+body.dark .homepage-header {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .homepage-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
