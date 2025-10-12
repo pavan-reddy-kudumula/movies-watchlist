@@ -29,6 +29,9 @@ export default function Navbar() {
               <Link to="/watchlist">Watchlist</Link>
             </li>
             <li>
+              <Link to="/recommendations">AI Recommendations</Link>
+            </li>
+            <li>
               <button className="auth-btn" onClick={logout}>
                 Logout
               </button>

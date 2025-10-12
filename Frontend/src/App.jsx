@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import AddMovies from "./pages/AddMovies"
 import Watchlist from "./pages/Watchlist"
+import Recommendations from "./pages/Recommendations"
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
         <Route path="/watchlist" element={
           <PrivateRoute>
             <Watchlist />
+          </PrivateRoute>} 
+        />
+        <Route path="/recommendations" element={
+          <PrivateRoute>
+            <Recommendations />
           </PrivateRoute>} 
         />
       </Routes>
