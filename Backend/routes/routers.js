@@ -6,10 +6,14 @@ import UserModel from "../models/User.js"
 import MovieModel from "../models/Movie.js"
 import authMiddleware from "./auth.js"
 import axios from "axios"
+import { GoogleGenAI } from "@google/genai";
+
 
 const JWT_SECRET = process.env.JWT_SECRET
 const API_KEY = process.env.API_KEY;
 const url = `http://www.omdbapi.com/?apikey=${API_KEY}&t=`;
+
+const genAI = new GoogleGenAI({});
 
 router.post('/api/auth/signup', async (req, res)=>{
     try{
@@ -124,6 +128,54 @@ router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
     console.error("Error adding movie:", err.message);
     res.status(500).json({ msg: "Server error" });
   }
+});
+
+router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
+        try {
+        const userWatchlist = await MovieModel.find({ userId: req.user.id });
+
+        if (!userWatchlist || userWatchlist.length === 0) {
+            return res.status(404).json({ message: "Your watchlist is empty. Add some movies first!" });
+        }
+
+        const prompt = `
+            You are a movie recommendation expert. Based on the user's watchlist below, recommend 5 new movies.
+
+            - Your response MUST be a valid JSON array of objects.
+            - Each object must have TWO keys:
+              1. "title": The exact, official movie title as it would appear in a database like IMDb. Do not abbreviate or add the year".
+              2. "reason": A short, compelling reason for the recommendation.
+
+            - Example of a good title: "The Lord of the Rings: The Fellowship of the Ring" or "RRR"
+            - Example of a bad title: "Lord of the Rings 1" or "The Fellowship of the Ring (2001)" or RRR (Rise, Roar, Revolt)
+
+            Here is the user's watchlist:
+            ${JSON.stringify(userWatchlist.map(movie => ({
+                title: movie.title,
+                director: movie.director,
+                actors: movie.actors,
+                plot: movie.plot
+            })))}
+        `;
+
+        const result = await genAI.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            generationConfig: {
+                response_mime_type: "application/json",
+            }
+        });
+        
+        const rawText = result.text;
+        const cleanedText = rawText.replace(/^```json\s*|```$/g, '');
+        const recommendations = JSON.parse(cleanedText);
+
+        res.json({ recommendations });
+
+    } catch (err) {
+        console.error("Gemini recommendation error: ", err);
+        res.status(500).json({ error: "Failed to generate AI recommendations." });
+    }
 });
 
 router.delete('/api/auth/deleteMovie/:id', authMiddleware, async (req, res) => {

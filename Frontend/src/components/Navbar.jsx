@@ -22,6 +22,7 @@ export default function Navbar() {
             <li><NavLink to="/profile">Profile</NavLink></li>
             <li><NavLink to="/addmovies">Add movies</NavLink></li>
             <li><NavLink to="/watchlist">Watchlist</NavLink></li>
+            <li><NavLink to="/AI Recommendations">Watchlist</NavLink></li>
           </>
         ) : (
           <>

@@ -1,0 +1,113 @@
+.recommendations-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    max-width: 800px;
+    margin: 2rem auto;
+}
+
+.recommendations-container h1 {
+    font-size: 2.5rem;
+    color: var(--text-color);
+}
+
+.recommendations-container p {
+    font-size: 1.1rem;
+    color: var(--label-color);
+    margin-bottom: 2rem;
+}
+
+.recommend-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 2rem;
+}
+
+.recommend-btn:hover {
+    background-color: var(--primary-hover-color);
+    transform: translateY(-2px);
+}
+
+.recommend-btn:disabled {
+    background-color: var(--label-color);
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 1rem;
+}
+
+.recommendations-list {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.recommendations-list h2 {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.recommendations-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendation-card {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    text-align: left;
+    box-shadow: var(--box-shadow);
+    display: flex; /* Add flexbox for layout */
+    justify-content: space-between; /* Pushes button to the right */
+    align-items: center;
+}
+
+.recommendation-details {
+    flex-grow: 1; /* Allows text to take up available space */
+}
+
+.recommendation-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+}
+
+.add-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 1.5rem; /* Adds space between text and button */
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.add-btn:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.add-btn:disabled {
+    background-color: var(--label-color);
+    cursor: not-allowed;
+}
+
+.add-btn.added {
+    background-color: #22c55e; /* A green color */
+    cursor: default;
+}
