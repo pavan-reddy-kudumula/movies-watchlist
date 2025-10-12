@@ -1,42 +1,50 @@
-# 🎬 Movies Watchlist App
+🎬 Movies Watchlist App
+A full-stack MERN application to search, save, and manage your favorite movies. Built to demonstrate skills in React, Node.js, Express, and MongoDB, this app features JWT authentication, a clean UI, and intelligent movie recommendations powered by Google's Gemini API.
 
-A full-stack **MERN** application to search, save, and manage your favorite movies using the TMDB API.  
-Built to demonstrate skills in **React, Node.js, Express, and MongoDB**, with authentication and a clean, responsive UI.
+🚀 Features
+🔐 Authentication – Secure Signup & Login with JWT (JSON Web Tokens).
 
----
+🤖 AI Recommendations – Get personalized movie suggestions based on your watchlist, powered by the Google Gemini API.
 
-## 🚀 Features
-- 🔐 **Authentication** – Signup & Login with JWT (JSON Web Tokens)
-- 🎥 **Movie Search** – Fetch movies from the TMDB API
-- 📌 **Personal Watchlist** – Add or remove movies to your account
-- 📱 **Responsive UI** – Works on desktop and mobile
-- 🌙 **Dark Mode** – Modern, elegant design
+🎥 Movie Search – Fetch movie details from the OMDB API.
 
----
+📌 Personal Watchlist – Add or remove movies from your user-specific list.
 
-## 🛠 Tech Stack
-**Frontend:** React (Vite), Tailwind CSS  
-**Backend:** Node.js, Express.js  
-**Database:** MongoDB (Mongoose)  
-**Authentication:** JWT  
-**API:** [OMDB](https://www.themoviedb.org/documentation/api)  
+📱 Responsive UI – A seamless experience on both desktop and mobile devices.
 
----
+🌙 Dark Mode – A sleek, eye-friendly dark theme.
 
-## 📂 Project Structure
+🛠 Tech Stack
+Frontend: React (Vite), CSS
 
+Backend: Node.js, Express.js
+
+Database: MongoDB (Mongoose)
+
+Authentication: JWT, Bcrypt.js
+
+APIs:
+
+OMDB API for movie data.
+
+Google Gemini API for AI recommendations.
+
+📂 Project Structure
 Movies Watchlist/
-│── Backend/ # Express + MongoDB server
-│ ├── models/ # Database models
-│ ├── routes/ # API routes
-│ └── server.js # Entry point
 │
-│── Frontend/ # React app
-│ ├── src/
-│ │ ├── components/ # Reusable components
-│ │ ├── context/ # Auth context
-│ │ └── pages/ # App pages
-│ └── vite.config.js
+├── Backend/              # Express + MongoDB server
+│   ├── models/           # Mongoose schemas (User, Movie)
+│   ├── routes/           # API routes (auth, movies, recommendations)
+│   └── index.js          # Server entry point
 │
-│── .gitignore
-│── README.md
+├── Frontend/             # React application
+│   └── src/
+│       ├── components/   # Reusable UI components (Navbar, etc.)
+│       ├── context/      # Global state (AuthContext, ThemeContext)
+│       ├── pages/        # Route components (Login, Watchlist, etc.)
+│       ├── api.js        # Centralized Axios instance
+│       └── App.jsx       # Main router setup
+│
+├── .env                  # Environment variables (API keys, DB URI)
+├── .gitignore
+└── README.md
