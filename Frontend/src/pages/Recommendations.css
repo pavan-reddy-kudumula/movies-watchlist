@@ -111,3 +111,39 @@
     background-color: #22c55e; /* A green color */
     cursor: default;
 }
+
+@media (max-width: 768px) {
+    .recommendations-container {
+        padding: 1rem; /* Less padding on smaller screens */
+        margin: 1rem auto;
+    }
+
+    .recommendations-container h1 {
+        font-size: 2rem; /* Smaller heading */
+    }
+
+    .recommendations-container p {
+        font-size: 1rem;
+    }
+
+    .recommend-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .recommendation-card {
+        flex-direction: column; /* Stack card content vertically */
+        align-items: flex-start; /* Align items to the left */
+        padding: 1rem;
+    }
+    
+    .recommendation-details {
+        margin-bottom: 1rem; /* Add space between text and the button below it */
+        width: 100%;
+    }
+
+    .add-btn {
+        margin-left: 0; /* Remove the left margin */
+        width: 100%;   /* Make the button full-width for easy tapping */
+    }
+}

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react'; // 1. Import useEffect
 import API from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -8,20 +8,40 @@ import './Recommendations.css';
 
 function Recommendations() {
     const { user } = useContext(AuthContext);
-    const [recommendations, setRecommendations] = useState([]);
+    
+    // 2. Initialize state by reading from sessionStorage first.
+    // This is a "lazy initializer" - it only runs on the first render.
+    const [recommendations, setRecommendations] = useState(() => {
+        const saved = localStorage.getItem('recommendations');
+        return saved ? JSON.parse(saved) : [];
+    });
+    const [addedMovies, setAddedMovies] = useState(() => {
+        const saved = localStorage.getItem('addedMovies');
+        return saved ? JSON.parse(saved) : [];
+    });
+    
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [addingMovieTitle, setAddingMovieTitle] = useState(null);
-    const [addedMovies, setAddedMovies] = useState([]);
+
+    // 3. Use useEffect to SAVE data to sessionStorage whenever state changes.
+    useEffect(() => {
+        // We store the data as a JSON string because storage can only hold strings.
+        localStorage.setItem('recommendations', JSON.stringify(recommendations));
+    }, [recommendations]);
+
+    useEffect(() => {
+        localStorage.setItem('addedMovies', JSON.stringify(addedMovies));
+    }, [addedMovies]);
 
     const handleGetRecommendations = async () => {
         setIsLoading(true);
         setError('');
+        // Clear previous state when fetching new recommendations
         setRecommendations([]);
         setAddedMovies([]);
 
         try {
-            // Send a GET request. The server knows who the user is from the token.
             const response = await API.get('/auth/recommendations');
             setRecommendations(response.data.recommendations);
         } catch (err) {
@@ -34,17 +54,16 @@ function Recommendations() {
     };
 
     const handleAddMovie = async (title) => {
-        setAddingMovieTitle(title); // Set loading state for this specific button
+        setAddingMovieTitle(title);
         try {
-            // Your existing backend endpoint is perfect for this
             await API.post(`/auth/postMovie/${title}`);
             toast.success(`"${title}" was added to your watchlist!`);
             setAddedMovies(prevAdded => [...prevAdded, title]);
         } catch (err) {
             const errorMsg = err.response?.data?.msg || `Failed to add "${title}"`;
-            toast.error(errorMsg); // Show specific error like "Movie already in watchlist"
+            toast.error(errorMsg);
         } finally {
-            setAddingMovieTitle(null); // Reset loading state for the button
+            setAddingMovieTitle(null);
         }
     };
 
@@ -52,7 +71,8 @@ function Recommendations() {
         return <Navigate to="/login" />;
     }
 
-return (
+    // The rest of your JSX remains exactly the same.
+    return (
         <div className="recommendations-container">
             <h1>AI Movie Recommender</h1>
             <p>Click the button to get movie recommendations based on your personal watchlist.</p>
@@ -68,7 +88,6 @@ return (
                     <h2>Here are some movies you might like:</h2>
                     <ul>
                         {recommendations.map((movie, index) => {
-                            // ✨ 4. Check the status for each movie to determine button text and state
                             const isAdded = addedMovies.includes(movie.title);
                             const isAdding = addingMovieTitle === movie.title;
 
