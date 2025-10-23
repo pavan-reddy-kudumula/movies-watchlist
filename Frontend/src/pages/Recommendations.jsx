@@ -12,11 +12,11 @@ function Recommendations() {
     // 2. Initialize state by reading from sessionStorage first.
     // This is a "lazy initializer" - it only runs on the first render.
     const [recommendations, setRecommendations] = useState(() => {
-        const saved = localStorage.getItem('recommendations');
+        const saved = sessionStorage.getItem('recommendations');
         return saved ? JSON.parse(saved) : [];
     });
     const [addedMovies, setAddedMovies] = useState(() => {
-        const saved = localStorage.getItem('addedMovies');
+        const saved = sessionStorage.getItem('addedMovies');
         return saved ? JSON.parse(saved) : [];
     });
     
@@ -27,11 +27,11 @@ function Recommendations() {
     // 3. Use useEffect to SAVE data to sessionStorage whenever state changes.
     useEffect(() => {
         // We store the data as a JSON string because storage can only hold strings.
-        localStorage.setItem('recommendations', JSON.stringify(recommendations));
+        sessionStorage.setItem('recommendations', JSON.stringify(recommendations));
     }, [recommendations]);
 
     useEffect(() => {
-        localStorage.setItem('addedMovies', JSON.stringify(addedMovies));
+        sessionStorage.setItem('addedMovies', JSON.stringify(addedMovies));
     }, [addedMovies]);
 
     const handleGetRecommendations = async () => {
