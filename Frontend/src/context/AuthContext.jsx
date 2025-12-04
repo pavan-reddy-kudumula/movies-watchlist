@@ -30,6 +30,8 @@ export default function AuthProvider({ children }) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("tokenExpiry");
+    sessionStorage.removeItem("addedMovies");
+    sessionStorage.removeItem("recommendations");
     
     if(logoutTimer){
       clearTimeout(logoutTimer);

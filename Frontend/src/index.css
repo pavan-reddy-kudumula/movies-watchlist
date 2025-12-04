@@ -1,5 +1,9 @@
 /* src/index.css */
-
+* {
+  box-sizing: border-box; /* Keeps padding inside the width */
+  margin: 0;
+  padding: 0;
+}
 /* --- Light Mode & Global Variables --- */
 :root {
   /* Primary Colors */

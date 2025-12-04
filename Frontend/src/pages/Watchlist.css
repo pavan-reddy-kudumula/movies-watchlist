@@ -27,7 +27,8 @@
   box-shadow: var(--box-shadow);
 }
 
-.flip-card:hover .flip-card-inner {
+/* Toggle flip based on class presence */
+.flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
 
@@ -49,7 +50,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  transform: rotateY(0deg); /* 👈 THIS IS THE FIX */
+  transform: rotateY(0deg); 
 }
 
 .flip-card-front img {
@@ -62,16 +63,6 @@
   z-index: 1;
 }
 
-/* .flip-card-front .card-title {
-  position: relative;
-  z-index: 2;
-  background: linear-gradient(to right, #a78bfa, #8b5cf6);
-  padding: 0.75rem;
-  margin: 0;
-  font-size: 1.1rem;
-  color: black;
-} */
-
 /* --- Back Side of the Card (Details) --- */
 .flip-card-back {
   background-color: var(--card-bg);
@@ -82,11 +73,17 @@
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
+  
+  /* IMPORTANT: This allows us to position the trash icon absolutely inside */
+  position: relative; 
 }
 
 .flip-card-back .card-title {
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
+  /* Add padding to the right so the title doesn't overlap the trash icon */
+  padding-left: 30px;
+  padding-right: 30px; 
 }
 
 .card-details {
@@ -100,26 +97,64 @@
   margin: 0 0 0.5rem 0;
 }
 
-/* --- Delete Button Styling --- */
-.flip-card-back button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
+/* --- Delete Icon Styling (Trash Can) --- */
+.delete-icon-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  
+  background: transparent;
   border: none;
-  border-radius: 8px;
-  background-color: var(--delete-btn-bg);
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  
+  /* Default color (Greyish) */
+  color: #9ca3af; 
+  
+  /* Sizing and alignment */
+  padding: 8px;
+  border-radius: 50%; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10; /* Ensures it sits above other content */
 }
 
-.flip-card-back button:hover {
-  background-color: var(--delete-btn-hover-bg);
+.delete-icon-btn:hover {
+  color: #ef4444; /* Red on hover */
+  background-color: rgba(239, 68, 68, 0.1); /* Light red background circle */
+  transform: scale(1.1); /* Slight grow effect */
 }
 
-/* ... (all your existing styles from the file) ... */
+/* --- Like Icon Styling --- */
+.like-icon-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* Positioned Top Left */
+  
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  /* Default outline color (Greyish) */
+  color: #9ca3af; 
+  
+  /* Sizing and alignment */
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+/* Hover Effect for Like Button */
+.like-icon-btn:hover {
+  color: #ef4444; /* Turns the outline red on hover */
+  transform: scale(1.1); /* Pop effect */
+  background-color: rgba(239, 68, 68, 0.1); /* Light red circle */
+}
 
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {

@@ -1,8 +1,15 @@
+/* --- Auth Container (Fixed Height, No Scroll) --- */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  
+  /* 1. Fix height to fill screen minus Navbar (~66px) */
+  height: calc(100vh - 66px); 
+  
+  /* 2. Hide scrollbars */
+  overflow: hidden; 
+  
   padding: 20px;
   box-sizing: border-box;
 }
@@ -85,22 +92,48 @@ html.dark-mode .input:focus {
   color: var(--primary-color);
 }
 
+/* --- Auth Button Styling --- */
 .auth-btn {
   width: 100%;
   padding: 12px;
+  
   background-color: var(--primary-color);
   color: white;
+  
   border: none;
-  border-radius: 8px;
+  border-radius: 8px; /* Matches your input fields */
+  
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  
+  /* Smooth transition for hover and disabled states */
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.auth-btn:hover {
+/* 1. HOVER State (Only works when NOT disabled) */
+.auth-btn:not(:disabled):hover {
   background-color: var(--primary-hover-color);
-  transform: translateY(-1px);
+  transform: translateY(-2px); /* Lifts up slightly */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 2. ACTIVE State (When clicking) */
+.auth-btn:active {
+  transform: translateY(0); /* Presses down */
+  box-shadow: none;
+}
+
+/* 3. DISABLED State (The Grey Look) */
+.auth-btn:disabled {
+  background-color: #e5e7eb; /* Light Grey background */
+  color: #9ca3af; /* Dark Grey text */
+  cursor: not-allowed; /* Shows 'no' cursor */
+  
+  /* Reset movement and shadow so it looks flat and frozen */
+  transform: none;
+  box-shadow: none;
 }
 
 .switch-link {
@@ -124,6 +157,16 @@ html.dark-mode .input:focus {
 
 /* --- Responsive Styles --- */
 @media (max-width: 480px) {
+  /* On mobile, we MUST allow scrolling because the keyboard 
+     might cover the input fields */
+  .auth-container {
+    height: auto; 
+    min-height: calc(100vh - 66px);
+    overflow-y: auto; 
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
   .auth-card {
     padding: 25px;
   }

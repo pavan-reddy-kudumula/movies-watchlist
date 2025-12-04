@@ -102,6 +102,16 @@ router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
 
 router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
   try {
+
+    const existingMovie = await MovieModel.findOne({ 
+        userId: req.user.id, 
+        title: { $regex: new RegExp(`^${req.params.title}$`, 'i') } 
+    });
+
+    if (existingMovie) {
+      return res.status(400).json({ msg: "Movie already in your watchlist" });
+    }
+    
     const response = await axios.get(url + `${req.params.title}`)
     if (response.data.Response === "False") {
       return res.status(404).json({ msg: "Movie not found" });

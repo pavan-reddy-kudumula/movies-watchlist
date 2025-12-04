@@ -1,149 +1,197 @@
+/* Recommendations.css */
+
 .recommendations-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    text-align: center;
-    max-width: 800px;
-    margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+  max-width: 800px;
+  margin: 2rem auto;
 }
 
 .recommendations-container h1 {
-    font-size: 2.5rem;
-    color: var(--text-color);
+  font-size: 2.5rem;
+  font-weight: 800; /* Bolder font like AddMovies */
+  color: var(--text-color);
+  letter-spacing: -0.5px;
 }
 
 .recommendations-container p {
-    font-size: 1.1rem;
-    color: var(--label-color);
-    margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: var(--label-color);
+  margin-bottom: 2rem;
 }
 
+/* --- Main Recommend Button (Big Button) --- */
 .recommend-btn {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    margin-bottom: 2rem;
+  padding: 1rem 2.5rem; /* Wider for professional look */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary-color);
+  border: none;
+  
+  /* Pill Shape to match AddMovies */
+  border-radius: 50px; 
+  
+  cursor: pointer;
+  margin-bottom: 2rem;
+  
+  /* The Smooth Animation */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(109, 40, 217, 0.25);
 }
 
-.recommend-btn:hover {
-    background-color: var(--primary-hover-color);
-    transform: translateY(-2px);
+.recommend-btn:not(:disabled):hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-3px); /* Lift up */
+  box-shadow: 0 8px 15px rgba(109, 40, 217, 0.3);
 }
 
+.recommend-btn:active {
+  transform: translateY(-1px); /* Press down */
+  box-shadow: 0 4px 6px rgba(109, 40, 217, 0.2);
+}
+
+/* THE DISABLED STATE (Exact match) */
 .recommend-btn:disabled {
-    background-color: var(--label-color);
-    cursor: not-allowed;
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .error-message {
-    color: var(--error-color);
-    margin-top: 1rem;
+  color: var(--error-color);
+  margin-top: 1rem;
 }
 
+/* --- List Styling --- */
 .recommendations-list {
-    width: 100%;
-    margin-top: 2rem;
+  width: 100%;
+  margin-top: 2rem;
 }
 
 .recommendations-list h2 {
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
 }
 
 .recommendations-list ul {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
+/* --- Individual Movie Card --- */
 .recommendation-card {
-    background-color: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    text-align: left;
-    box-shadow: var(--box-shadow);
-    display: flex; /* Add flexbox for layout */
-    justify-content: space-between; /* Pushes button to the right */
-    align-items: center;
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  text-align: left;
+  box-shadow: var(--box-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-color); /* Subtle border definition */
 }
 
 .recommendation-details {
-    flex-grow: 1; /* Allows text to take up available space */
+  flex-grow: 1;
 }
 
 .recommendation-card h3 {
-    margin: 0 0 0.5rem 0;
-    color: var(--primary-color);
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-color);
 }
 
+.recommendation-card p {
+    margin: 0; /* Remove default margin for cleaner look */
+    color: var(--text-color);
+}
+
+/* --- "Add" Button (Small Button) --- */
 .add-btn {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: white;
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-left: 1.5rem; /* Adds space between text and button */
-    white-space: nowrap; /* Prevents text from wrapping */
+  padding: 0.7rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary-color);
+  border: none;
+  
+  /* Pill Shape */
+  border-radius: 50px; 
+  
+  cursor: pointer;
+  margin-left: 1.5rem;
+  white-space: nowrap;
+  
+  /* Smooth Animation */
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.add-btn:hover {
-    background-color: var(--primary-hover-color);
+.add-btn:not(:disabled):hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
 }
 
+.add-btn:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: none;
+}
+
+/* Standard Disabled State (Grey) */
 .add-btn:disabled {
-    background-color: var(--label-color);
-    cursor: not-allowed;
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
+/* Success/Added State (Green) */
+/* This overrides the grey disabled state because it comes after it */
 .add-btn.added {
-    background-color: #22c55e; /* A green color */
-    cursor: default;
+  background-color: #22c55e !important; /* Green */
+  color: white !important;
+  cursor: default;
+  opacity: 1; /* Ensure it stays bright */
 }
 
+/* --- Responsive --- */
 @media (max-width: 768px) {
-    .recommendations-container {
-        padding: 1rem; /* Less padding on smaller screens */
-        margin: 1rem auto;
-    }
+  .recommendations-container {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
 
-    .recommendations-container h1 {
-        font-size: 2rem; /* Smaller heading */
-    }
+  .recommendations-container h1 {
+    font-size: 2rem;
+  }
 
-    .recommendations-container p {
-        font-size: 1rem;
-    }
+  .recommend-btn {
+    width: 50%; /* Full width on mobile */
+  }
 
-    .recommend-btn {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-    }
+  .recommendation-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  
+  .recommendation-details {
+    margin-bottom: 1rem;
+    width: 100%;
+  }
 
-    .recommendation-card {
-        flex-direction: column; /* Stack card content vertically */
-        align-items: flex-start; /* Align items to the left */
-        padding: 1rem;
-    }
-    
-    .recommendation-details {
-        margin-bottom: 1rem; /* Add space between text and the button below it */
-        width: 100%;
-    }
-
-    .add-btn {
-        margin-left: 0; /* Remove the left margin */
-        width: 100%;   /* Make the button full-width for easy tapping */
-    }
+  .add-btn {
+    align-self: center;
+    width: 50%; /* Full width for easier tapping */
+  }
 }
