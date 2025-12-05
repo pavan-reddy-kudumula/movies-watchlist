@@ -69,7 +69,7 @@ function Login(){
                     Don't have an account? <Link to="/signup">Sign Up</Link>
                 </p>
             </div>
-            <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer position="top-right" theme="colored" autoClose={2000} />
         </div>) : (<Navigate to="/" />)}
         </>
     )

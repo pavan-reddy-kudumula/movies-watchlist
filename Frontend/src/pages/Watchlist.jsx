@@ -2,16 +2,22 @@ import API from "../api";
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Watchlist.css";
 
 // --- New Sub-Component for individual cards ---
 const MovieCard = ({ movie, onDelete }) => {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [isLiked, setIsLiked] = useState(false); // New State for Like
+  const { likedMovies, setLikedMovies } = useContext(AuthContext);
 
   const handleCardClick = () => {
     setIsFlipped(!isFlipped);
   };
+
+  const localId = `${movie.title.trim().toLowerCase()}#${movie.director.trim().toLowerCase()}`;
+
+  const isLiked = likedMovies.some(m => m.localId === localId);
 
   const handleDeleteClick = (e) => {
     e.stopPropagation(); 
@@ -20,10 +26,30 @@ const MovieCard = ({ movie, onDelete }) => {
     }
   };
 
-  const handleLikeClick = (e) => {
+  const handleLikeClick = async (e) => {
     e.stopPropagation(); // 🛑 Stops card from flipping
-    setIsLiked(!isLiked);
-    // Here you would typically make an API call to save the "like" to the database
+    if (isLiked) {
+      // UNLIKE
+      const safeId = encodeURIComponent(localId);
+      await API.delete(`/auth/like/${safeId}`);
+
+      toast.info("Removed from Favorites")
+
+      setLikedMovies(prev => prev.filter(m => m.localId !== localId));
+      return;
+    } 
+
+    await API.post(`/auth/like/${movie._id}`);
+    toast.success("Added to Favorites")
+    const newLiked = {
+      localId,
+      title: movie.title,
+      poster: movie.poster,
+      review: ""
+    };
+
+    setLikedMovies(prev => [...prev, newLiked]);
+
   };
 
   return (
@@ -99,44 +125,43 @@ function Watchlist() {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    getMovie();
+    // We define the async function inside useEffect to handle the promise
+    const fetchMovies = async () => {
+      try {
+        const res = await API.get(`/auth/getMovie`);
+        setMovies(res.data.movies);
+      } catch (err) {
+        console.error("Error fetching movies:", err);
+      }
+    };
+
+    fetchMovies();
   }, []);
 
-  const getMovie = () => {
-    API.get(`/auth/getMovie`)
-      .then(res => {
-        console.log(res.data);
-        setMovies(res.data.movies);
-      })
-      .catch(err => console.log(err));
+  const deleteMovie = async (id) => {
+    try {
+      await API.delete(`/auth/deleteMovie/${id}`);
+      // Optimistic update: Remove from UI immediately upon success
+      setMovies(prev => prev.filter(movie => movie._id !== id));
+      toast.info("Removed from Watchlist")
+    } catch (err) {
+      console.error("Error deleting movie:", err);
+    }
   };
 
-  const deleteMovie = (id) => {
-    API.delete(`/auth/deleteMovie/${id}`)
-      .then((res) => {
-        console.log(res.data);
-        getMovie(); // Refresh list after delete
-      })
-      .catch((err) => console.log(err));
-  };
+  if (!user) return <Navigate to="/" />;
 
   return (
-    <>
-      {user ? (
-        <div className="movie-list">
-          {movies.map((movie, index) => (
-            // We pass the movie data and the delete function down as props
-            <MovieCard 
-              key={movie._id || index} 
-              movie={movie} 
-              onDelete={deleteMovie} 
-            />
-          ))}
-        </div>
-      ) : (
-        <Navigate to="/" />
-      )}
-    </>
+    <div className="movie-list">
+      {movies.map(movie => (
+        <MovieCard 
+            key={movie._id} 
+            movie={movie} 
+            onDelete={deleteMovie} 
+        />
+      ))}
+      <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
+    </div>
   );
 }
 

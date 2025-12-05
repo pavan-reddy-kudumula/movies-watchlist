@@ -12,7 +12,9 @@ export default function AuthProvider({ children }) {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   
-  const login = (token, userData) => {
+  const [likedMovies, setLikedMovies] = useState([]);
+
+  const login = async (token, userData) => {
     const decodedToken = jwtDecode(token);
     const expiryTime = decodedToken.exp * 1000; // Get expiry in milliseconds
     const remainingTime = expiryTime - Date.now();
@@ -22,6 +24,9 @@ export default function AuthProvider({ children }) {
     localStorage.setItem("tokenExpiry", expiryTime);
 
     setUser(userData); // could also call fetchProfile(token)
+
+    const liked = await API.get("/auth/liked");
+    setLikedMovies(liked.data);
 
     logoutTimer = setTimeout(logout, remainingTime);
   };
@@ -37,6 +42,7 @@ export default function AuthProvider({ children }) {
       clearTimeout(logoutTimer);
     }
     setUser(null);
+    setLikedMovies([]);
   }, []);
   
   // On app start, check for token & fetch profile
@@ -59,6 +65,10 @@ export default function AuthProvider({ children }) {
       try {
           const res = await API.get("/auth/profile");
           setUser(res.data);
+
+          const liked = await API.get("/auth/liked");
+          setLikedMovies(liked.data);
+
           localStorage.setItem("user", JSON.stringify(res.data));
           logoutTimer = setTimeout(logout, remainingTime);
         } catch (err) {
@@ -87,7 +97,7 @@ export default function AuthProvider({ children }) {
 
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, likedMovies, setLikedMovies }}>
       {children}
     </AuthContext.Provider>
   );

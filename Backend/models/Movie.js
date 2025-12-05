@@ -32,7 +32,7 @@ const movieSchema = new mongoose.Schema({
     }
 })
 
-movieSchema.index({ title: 1, userId: 1 }, { unique: true });
+movieSchema.index({ title: 1, userId: 1, director: 1 }, { unique: true });
 
 
 const MovieModel = mongoose.model('Movie', movieSchema)

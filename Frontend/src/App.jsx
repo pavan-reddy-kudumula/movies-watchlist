@@ -8,6 +8,7 @@ import AddMovies from "./pages/AddMovies"
 import Watchlist from "./pages/Watchlist"
 import HomePage from "./pages/Homepage"
 import Recommendations from "./pages/Recommendations"
+import LikedMovies from "./pages/LikedMovies";
 
 function App() {
   return (
@@ -35,6 +36,11 @@ function App() {
         <Route path="/recommendations" element={
           <PrivateRoute>
             <Recommendations />
+          </PrivateRoute>} 
+        />
+        <Route path="/favorites" element={
+          <PrivateRoute>
+            <LikedMovies />
           </PrivateRoute>} 
         />
       </Routes>

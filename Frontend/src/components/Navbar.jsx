@@ -23,6 +23,7 @@ export default function Navbar() {
             <li><NavLink to="/addmovies">Add movies</NavLink></li>
             <li><NavLink to="/watchlist">Watchlist</NavLink></li>
             <li><NavLink to="/recommendations">AI Recommendations</NavLink></li>
+            <li><NavLink to="/favorites">Favorites</NavLink></li>
           </>
         ) : (
           <>

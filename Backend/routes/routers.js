@@ -102,20 +102,53 @@ router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
 
 router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
   try {
+    const title = req.params.title;
+    const year = req.query.year; 
 
-    const existingMovie = await MovieModel.findOne({ 
-        userId: req.user.id, 
-        title: { $regex: new RegExp(`^${req.params.title}$`, 'i') } 
-    });
-
-    if (existingMovie) {
-      return res.status(400).json({ msg: "Movie already in your watchlist" });
+    // 1. FIX: Encode the title to handle spaces, '&', '?', etc.
+    // Assuming 'url' is something like "http://www.omdbapi.com/?apikey=XYZ&t="
+    let apiUrl = `${url}${encodeURIComponent(title)}`;
+    
+    if (year) {
+      apiUrl += `&y=${year}`;
     }
     
-    const response = await axios.get(url + `${req.params.title}`)
+    const response = await axios.get(apiUrl);
+    
     if (response.data.Response === "False") {
       return res.status(404).json({ msg: "Movie not found" });
     }
+
+    const movieTitle = response.data.Title;
+    const movieDirector = response.data.Director;
+
+    // Build stable localId for likedMovies
+    const localId = `${movieTitle.trim().toLowerCase()}#${movieDirector.trim().toLowerCase()}`;
+
+    // 🔍 1. CHECK IF THIS MOVIE IS ALREADY LIKED
+    const likedExists = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    // 2. CHECK DUPLICATES (Using the OFFICIAL title from API)
+    // We check both Title AND Director to allow remakes with the same name
+    const existingMovie = await MovieModel.findOne({
+      userId: req.user.id,
+      title: movieTitle,
+      director: movieDirector
+    });
+
+    if (existingMovie) {
+      return res.status(400).json({ msg: "Movie already in your watchlist", liked: Boolean(likedExists) });
+    }
+
+    // 3. HANDLE MISSING POSTERS
+    // OMDb returns "N/A" string if no poster exists. This breaks <img> tags.
+    // You can replace it with a placeholder or keep it as is.
+    const posterImage = response.data.Poster === "N/A" 
+      ? "https://via.placeholder.com/300x450?text=No+Poster" // Optional placeholder
+      : response.data.Poster;
 
     const movieData = {
       title: response.data.Title,
@@ -123,13 +156,14 @@ router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
       actors: response.data.Actors,
       plot: response.data.Plot,
       imdb: response.data.imdbRating,
-      poster: response.data.Poster,
+      poster: posterImage,
       userId: req.user.id
     };
 
     const movie = new MovieModel(movieData);
     await movie.save();
-    res.status(200).json({ msg: 'Movie added successfully!', movie });
+
+    res.status(200).json({ msg: 'Movie added successfully!', movie, liked: Boolean(likedExists) });
   } 
   catch (err) {
     if (err.code === 11000) {
@@ -137,6 +171,126 @@ router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
     }
     console.error("Error adding movie:", err.message);
     res.status(500).json({ msg: "Server error" });
+  }
+});
+
+router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
+  try {
+    const { movieId } = req.params;
+
+    // 1. Get the movie from watchlist (ensure belongs to this user)
+    const movie = await MovieModel.findOne({
+      _id: movieId,
+      userId: req.user.id
+    });
+
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+
+    const movieTitle = movie.title;
+    const movieDirector = movie.director;
+
+    // 2. Create stable localId (title + director)
+    const localId = `${movieTitle.trim().toLowerCase()}#${movieDirector.trim().toLowerCase()}`;
+
+    // 3. Check if already liked
+    const alreadyLiked = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    if (alreadyLiked) {
+      return res.status(400).json({ message: "Movie already liked" });
+    }
+
+    // 4. Add to likedMovies
+    await UserModel.findByIdAndUpdate(
+      req.user.id,
+      {
+        $push: {
+          likedMovies: {
+            localId,
+            title: movie.title,
+            poster: movie.poster,
+            review: ""
+          }
+        }
+      }
+    );
+
+    res.json({ message: "Movie liked successfully" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+  
+router.delete("/api/auth/like/:localId", authMiddleware, async (req, res) => {
+  try {
+    const { localId } = req.params;
+
+    const alreadyLiked = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    if (!alreadyLiked) {
+      return res.status(400).json({ message: "Movie is not liked" });
+    }
+
+    await UserModel.findByIdAndUpdate(
+      req.user.id,
+      {
+        $pull: {
+          likedMovies: { localId }
+        }
+      }
+    );
+
+    res.json({ message: "Movie unliked" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.patch("/api/auth/like/:localId/review", authMiddleware, async (req, res) => {
+  try {
+    const { localId } = req.params;
+    const { review } = req.body;
+
+    const alreadyLiked = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    if (!alreadyLiked) {
+      return res.status(400).json({ message: "Cannot update review. Movie not liked." });
+    }
+
+    await UserModel.updateOne(
+      { _id: req.user.id, "likedMovies.localId": localId },
+      { $set: { "likedMovies.$.review": review } }
+    );
+
+    res.json({ message: "Review updated" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/api/auth/liked", authMiddleware, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id).select("likedMovies");
+    res.json(user.likedMovies || []);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
