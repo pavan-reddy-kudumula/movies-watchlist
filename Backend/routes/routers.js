@@ -295,16 +295,49 @@ router.get("/api/auth/liked", authMiddleware, async (req, res) => {
 });
 
 router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
-        try {
-        const userWatchlist = await MovieModel.find({ userId: req.user.id });
+      try {
+        // 1. Fetch Watchlist (Limit to last 20 to save tokens/latency)
+        const userWatchlist = await MovieModel.find({ userId: req.user.id })
+            .sort({ _id: -1 })
+            .limit(20);
 
-        if (!userWatchlist || userWatchlist.length === 0) {
-            return res.status(404).json({ message: "Your watchlist is empty. Add some movies first!" });
+        // 2. Fetch User's Liked Movies
+        const userProfile = await UserModel.findById(req.user.id).select('likedMovies');
+        // Get the last 20 liked movies (assuming new ones are pushed to end)
+        const userLikes = userProfile ? userProfile.likedMovies.slice(-20) : [];
+
+        // 3. Validation: Ensure at least ONE list has data
+        if (userWatchlist.length === 0 && userLikes.length === 0) {
+            return res.status(404).json({ 
+                message: "Your watchlist and favorites are empty. Add movies to get recommendations!" 
+            });
         }
 
-        const prompt = `
-            You are a movie recommendation expert. Based on the user's watchlist below, recommend 5 new movies.
+        // 4. Format data for the AI
+        // We add a 'status' field so the AI knows how to weight the movie
+        const watchlistData = userWatchlist.map(m => ({
+            title: m.title,
+            director: m.director,
+            status: "User plans to watch this (Interest)"
+        }));
 
+        const likedData = userLikes.map(m => ({
+            title: m.title,
+            review: m.review ? `User's review: "${m.review}"` : "User liked this",
+            status: "User LOVED this movie (Strong Favorite)"
+        }));
+
+        const combinedData = [...watchlistData, ...likedData];
+
+        const prompt = `
+            You are a movie recommendation expert. Based on the user's movie history below, recommend 5 new movies.
+
+            The data includes:
+            1. "Favorites": Movies the user has already watched and loved. Treat these as strong indicators of taste.
+            2. "Interest": Movies the user wants to watch. Treat these as curiosity indicators.
+
+            RULES:
+            - Do NOT recommend movies that are already in the list below.
             - Your response MUST be a valid JSON array of objects.
             - Each object must have TWO keys:
               1. "title": The exact, official movie title as it would appear in a database like IMDb. Do not abbreviate or add the year".
@@ -313,13 +346,8 @@ router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
             - Example of a good title: "The Lord of the Rings: The Fellowship of the Ring" or "RRR"
             - Example of a bad title: "Lord of the Rings 1" or "The Fellowship of the Ring (2001)" or RRR (Rise, Roar, Revolt)
 
-            Here is the user's watchlist:
-            ${JSON.stringify(userWatchlist.map(movie => ({
-                title: movie.title,
-                director: movie.director,
-                actors: movie.actors,
-                plot: movie.plot
-            })))}
+            Here is the user's movie data:
+            ${JSON.stringify(combinedData)}
         `;
 
         const result = await genAI.models.generateContent({

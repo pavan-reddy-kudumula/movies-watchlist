@@ -110,7 +110,7 @@ function Recommendations() {
                     </ul>
                 </div>
             )}
-            <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
+            <ToastContainer position="bottom-right" autoClose={2000} theme="colored" />
         </div>
     );
 }
