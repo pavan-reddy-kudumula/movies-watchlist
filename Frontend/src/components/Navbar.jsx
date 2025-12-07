@@ -48,6 +48,11 @@ export default function Navbar() {
               <li><NavLink to="/signup" onClick={closeMenu}>Sign up</NavLink></li>
             </>
           )}
+          <li>{user && (
+            <button className="auth-btn" onClick={() => { logout(); closeMenu(); }}>
+              Logout
+            </button>
+          )}</li>
         </ul>
       </div>
 
@@ -64,11 +69,6 @@ export default function Navbar() {
             <span className="slider"></span>
           </label>
         </div>
-        {user && (
-          <button className="auth-btn" onClick={() => { logout(); closeMenu(); }}>
-            Logout
-          </button>
-        )}
       </div>
 
       {/* --- OVERLAY (Click outside to close) --- */}
