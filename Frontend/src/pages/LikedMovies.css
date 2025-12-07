@@ -96,6 +96,13 @@
   outline: none;
   margin-bottom: 1rem;
   transition: border-color 0.2s;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.review-textarea::-webkit-scrollbar {
+  display: none;
 }
 
 .review-textarea:focus {
