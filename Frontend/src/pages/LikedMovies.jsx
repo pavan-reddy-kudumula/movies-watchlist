@@ -4,10 +4,11 @@ import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ConfirmModal from "../components/ConfirmModal";
 import './LikedMovies.css';
 
 // --- Sub-Component: Individual Liked Card ---
-const LikedMovieCard = ({ movie, onRemove, onUpdateReview }) => {
+const LikedMovieCard = ({ movie, onRemoveClick, onUpdateReview }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [review, setReview] = useState(movie.review || "");
 
@@ -15,15 +16,8 @@ const LikedMovieCard = ({ movie, onRemove, onUpdateReview }) => {
     setReview(movie.review || "");
   }, [movie.review]);
 
-  // Toggle Flip
-  const handleCardClick = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  // Handle Review Text Change
-  const handleReviewChange = (e) => {
-    setReview(e.target.value);
-  };
+  const handleCardClick = () => setIsFlipped(!isFlipped);
+  const handleReviewChange = (e) => setReview(e.target.value);
 
   // Save Review to Backend
   const handleSave = (e) => {
@@ -34,9 +28,7 @@ const LikedMovieCard = ({ movie, onRemove, onUpdateReview }) => {
   // Remove Movie
   const handleRemove = (e) => {
     e.stopPropagation(); // 🛑 Don't flip card
-    if (window.confirm("Remove this movie from your favorites?")) {
-      onRemove(movie.localId);
-    }
+    onRemoveClick(movie);
   };
 
   return (
@@ -77,21 +69,37 @@ const LikedMovieCard = ({ movie, onRemove, onUpdateReview }) => {
 // --- Main Page Component ---
 function LikedMovies() {
     const { user, likedMovies, setLikedMovies } = useContext(AuthContext);
+
+    const [modalConfig, setModalConfig] = useState({
+      isOpen: false,
+      localId: null,
+      movieTitle: ""
+    });
     
     if (!user) return <Navigate to="/login" />;
 
-    const handleRemoveMovie = async (localId) => {
-    try {
-        const safeId = encodeURIComponent(localId);
-        await API.delete(`/auth/like/${safeId}`);
-        
-        setLikedMovies(prev => prev.filter(m => m.localId !== localId));
+    const initiateRemove = (movie) => {
+      setModalConfig({
+        isOpen: true,
+        localId: movie.localId,
+        movieTitle: movie.title
+      });
+    };
 
-        toast.info("Movie removed from favorites");
-    } catch (err) {
-        console.error(err);
-        toast.error("Failed to remove movie");
-    }
+    const confirmRemove = async () => {
+      if (!modalConfig.localId) return;
+
+      try {
+          const safeId = encodeURIComponent(modalConfig.localId);
+          await API.delete(`/auth/like/${safeId}`);
+          setLikedMovies(prev => prev.filter(m => m.localId !== modalConfig.localId));
+          toast.info("Movie removed from favorites");
+      } catch (err) {
+          console.error(err);
+          toast.error("Failed to remove movie");
+      } finally {
+          setModalConfig({ isOpen: false, localId: null, movieTitle: "" });
+      }
     };
 
     const handleUpdateReview = async (localId, reviewText) => {
@@ -113,26 +121,34 @@ function LikedMovies() {
     };
 
 
-  return (
-    <div className="liked-container">
-      <h1>❤️ Your Favorites</h1>
+return (
+    <div className="liked-movie-list">
+      
+      <h1 className="liked-header">❤️ Your Favorites</h1>
 
       {likedMovies.length === 0 ? (
         <div className="empty-state">
           <p>You haven't liked any movies yet.</p>
         </div>
       ) : (
-        <div className="liked-grid">
-          {likedMovies.map((movie) => (
-            <LikedMovieCard 
-              key={movie.localId} 
-              movie={movie} 
-              onRemove={handleRemoveMovie}
-              onUpdateReview={handleUpdateReview}
-            />
-          ))}
-        </div>
+        likedMovies.map((movie) => (
+          <LikedMovieCard 
+            key={movie.localId} 
+            movie={movie} 
+            onRemoveClick={initiateRemove}
+            onUpdateReview={handleUpdateReview}
+          />
+        ))
       )}
+
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        title="Remove Favorite?"
+        message={`Are you sure you want to remove "${modalConfig.movieTitle}" from your favorites?`}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        onConfirm={confirmRemove}
+      />
+
       <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
     </div>
   );

@@ -8,6 +8,22 @@
   margin: 0 auto;
 }
 
+.watchlist-header {
+  grid-column: 1 / -1; 
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 3rem;
+  color: var(--label-color);
+  font-size: 1.2rem;
+}
+
 /* --- Flip Card Setup --- */
 .flip-card {
   background-color: transparent;
@@ -74,14 +90,12 @@
   justify-content: space-between;
   box-sizing: border-box;
   
-  /* IMPORTANT: This allows us to position the trash icon absolutely inside */
   position: relative; 
 }
 
 .flip-card-back .card-title {
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
-  /* Add padding to the right so the title doesn't overlap the trash icon */
   padding-left: 30px;
   padding-right: 30px; 
 }
@@ -162,5 +176,9 @@
     padding: 1rem;
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .watchlist-header {
+    font-size: 1.8rem;
   }
 }

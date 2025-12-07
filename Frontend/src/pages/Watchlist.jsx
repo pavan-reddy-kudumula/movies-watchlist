@@ -4,10 +4,11 @@ import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ConfirmModal from "../components/ConfirmModal"
 import "./Watchlist.css";
 
 // --- New Sub-Component for individual cards ---
-const MovieCard = ({ movie, onDelete }) => {
+const MovieCard = ({ movie, onDeleteClick }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const { likedMovies, setLikedMovies } = useContext(AuthContext);
 
@@ -21,9 +22,7 @@ const MovieCard = ({ movie, onDelete }) => {
 
   const handleDeleteClick = (e) => {
     e.stopPropagation(); 
-    if(window.confirm("Are you sure you want to delete this movie?")) {
-        onDelete(movie._id);
-    }
+    onDeleteClick(movie);
   };
 
   const handleLikeClick = async (e) => {
@@ -124,6 +123,12 @@ function Watchlist() {
   const [movies, setMovies] = useState([]);
   const { user } = useContext(AuthContext);
 
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    movieId: null,
+    movieTitle: ""
+  });
+
   useEffect(() => {
     // We define the async function inside useEffect to handle the promise
     const fetchMovies = async () => {
@@ -138,14 +143,27 @@ function Watchlist() {
     fetchMovies();
   }, []);
 
-  const deleteMovie = async (id) => {
+  const initiateDelete = (movie) => {
+    setModalConfig({
+      isOpen: true,
+      movieId: movie._id,
+      movieTitle: movie.title
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (!modalConfig.movieId) return;
+    
     try {
-      await API.delete(`/auth/deleteMovie/${id}`);
-      // Optimistic update: Remove from UI immediately upon success
-      setMovies(prev => prev.filter(movie => movie._id !== id));
-      toast.info("Removed from Watchlist")
+      await API.delete(`/auth/deleteMovie/${modalConfig.movieId}`);
+      setMovies(prev => prev.filter(movie => movie._id !== modalConfig.movieId));
+      toast.info("Removed from Watchlist");
     } catch (err) {
       console.error("Error deleting movie:", err);
+      toast.error("Failed to delete movie");
+    } finally {
+      // Close modal
+      setModalConfig({ isOpen: false, movieId: null, movieTitle: "" });
     }
   };
 
@@ -153,13 +171,31 @@ function Watchlist() {
 
   return (
     <div className="movie-list">
+
+      <h1 className="watchlist-header">🎬 Your Watchlist</h1>
+
+      {movies.length === 0 && (
+         <div className="empty-state">
+           <p>Your watchlist is empty.</p>
+         </div>
+      )}
+
       {movies.map(movie => (
         <MovieCard 
             key={movie._id} 
             movie={movie} 
-            onDelete={deleteMovie} 
+            onDeleteClick={initiateDelete}
         />
       ))}
+
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        title="Remove Movie?"
+        message={`Are you sure you want to remove "${modalConfig.movieTitle}" from your watchlist?`}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        onConfirm={confirmDelete}
+      />
+
       <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
     </div>
   );

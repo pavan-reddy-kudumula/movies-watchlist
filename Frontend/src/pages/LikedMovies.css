@@ -1,25 +1,30 @@
-/* --- Main Container --- */
-.liked-container {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.liked-container h1 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: var(--text-color);
-}
-
-/* --- Grid Layout (Same as Watchlist) --- */
-.liked-grid {
+.liked-movie-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* --- Flip Card Structure --- */
+.liked-header, 
+.empty-state {
+  grid-column: 1 / -1; 
+  text-align: center;
+}
+
+.liked-header {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.empty-state {
+  margin-top: 3rem;
+  color: var(--label-color);
+  font-size: 1.2rem;
+}
+
 .flip-card {
   background-color: transparent;
   width: 100%;
@@ -54,14 +59,12 @@
   overflow: hidden;
 }
 
-/* --- Front (Poster) --- */
 .flip-card-front img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* --- Back (Review & Title) --- */
 .flip-card-back {
   background-color: var(--card-bg);
   color: var(--text-color);
@@ -74,16 +77,15 @@
 
 .flip-card-back h3 {
   font-size: 1.2rem;
-  margin-top: 2rem; /* Space for the top buttons */
+  margin-top: 2rem;
   margin-bottom: 1rem;
   color: var(--primary-color);
 }
 
-/* --- Editable Review Textarea --- */
 .review-textarea {
   flex-grow: 1;
   width: 100%;
-  resize: none; /* Prevent manual resize breaking layout */
+  resize: none;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 0.8rem;
@@ -98,31 +100,19 @@
 
 .review-textarea:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.1);
 }
 
-/* --- Action Buttons --- */
 .save-btn {
   width: 100%;
   padding: 0.6rem;
-  background-color: #22c55e; /* Green */
+  background-color: #22c55e;
   color: white;
   border: none;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
 }
 
-.save-btn:hover {
-  background-color: #16a34a;
-}
-
-/* Delete Icon (Top Right) */
 .delete-like-btn {
   position: absolute;
   top: 10px;
@@ -132,27 +122,24 @@
   cursor: pointer;
   color: #9ca3af;
   padding: 5px;
-  border-radius: 50%;
-  transition: all 0.2s;
 }
 
 .delete-like-btn:hover {
   color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.1);
   transform: scale(1.1);
 }
 
-/* Empty State */
-.empty-state {
-  margin-top: 3rem;
-  color: var(--label-color);
-  font-size: 1.2rem;
-}
-
+/* --- Responsive Styles --- */
 @media (max-width: 600px) {
-  .liked-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 1rem;
+  .liked-movie-list {
+
     padding: 1rem;
+    gap: 1rem;
+    
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .liked-header {
+    font-size: 1.8rem;
   }
 }
