@@ -1,11 +1,9 @@
-// HomePage.jsx
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // Import the AuthContext
+import { AuthContext } from '../context/AuthContext';
 import './HomePage.css';
 
 export default function HomePage() {
-  // Get the user from the context
   const { user } = useContext(AuthContext);
 
   return (

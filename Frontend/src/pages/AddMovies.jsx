@@ -2,7 +2,7 @@ import API from "../api"
 import { useState, useContext } from 'react';
 import { AuthContext } from "../context/AuthContext"
 import { Navigate } from "react-router-dom";
-import {toast, ToastContainer} from "react-toastify"
+import {toast} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./AddMovies.css"
 
@@ -71,8 +71,7 @@ const addMovie = async () => {
             {isAdding ? "Adding" : "Add"}
           </button>
         </div>
-        <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
-      </div>) : (<Navigate to="/" />)}
+      </div>) : (<Navigate to="/login" />)}
     </>
   );
 };

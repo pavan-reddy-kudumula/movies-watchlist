@@ -1,103 +1,62 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import {jwtDecode} from "jwt-decode";
 import API from "../api";
 
 export const AuthContext = createContext();
 
-let logoutTimer;
-
 export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  
+  const [user, setUser] = useState(null);
   const [likedMovies, setLikedMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const login = async (token, userData) => {
-    const decodedToken = jwtDecode(token);
-    const expiryTime = decodedToken.exp * 1000; // Get expiry in milliseconds
-    const remainingTime = expiryTime - Date.now();
+  const fetchUserData = useCallback(async () => {
+    try {
+      const [profileRes, likedRes] = await Promise.all([
+        API.get("/auth/profile"),
+        API.get("/auth/liked")
+      ]);
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("tokenExpiry", expiryTime);
+      setUser(profileRes.data);
+      setLikedMovies(likedRes.data);
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setUser(null);
+      setLikedMovies([]);
+    }
+  }, []);
 
-    setUser(userData); // could also call fetchProfile(token)
-
-    const liked = await API.get("/auth/liked");
-    setLikedMovies(liked.data);
-
-    logoutTimer = setTimeout(logout, remainingTime);
+  const login = async () => {
+     await fetchUserData();
   };
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("tokenExpiry");
-    sessionStorage.removeItem("addedMovies");
-    sessionStorage.removeItem("recommendations");
-    
-    if(logoutTimer){
-      clearTimeout(logoutTimer);
+  const logout = async () => {
+    try {
+      await API.post("/auth/logout"); 
+    } catch (err) {
+      console.error("Logout error", err);
+    } finally {
+      setUser(null);
+      setLikedMovies([]);
+      sessionStorage.clear();
     }
-    setUser(null);
-    setLikedMovies([]);
-  }, []);
-  
-  // On app start, check for token & fetch profile
+  };
+
   useEffect(() => {
-    const verifyUser = async () => {
-      const token = localStorage.getItem("token");
-      const tokenExpiry = localStorage.getItem("tokenExpiry");
-
-      if (!token || !tokenExpiry) {
-        return; // No token, nothing to do
-      }
-      
-      // First, check if token is expired locally
-      const remainingTime = tokenExpiry - Date.now();
-      if (remainingTime <= 1000) {
-        logout();
-        return;
-      }
-
+    const initAuth = async () => {
       try {
-          const res = await API.get("/auth/profile");
-          setUser(res.data);
-
-          const liked = await API.get("/auth/liked");
-          setLikedMovies(liked.data);
-
-          localStorage.setItem("user", JSON.stringify(res.data));
-          logoutTimer = setTimeout(logout, remainingTime);
-        } catch (err) {
-          console.error("Token is invalid or expired, logging out.", err);
-          logout();
-        }
-    };
-    verifyUser();
-  }, [logout]);
-
-  // Sync login/logout across multiple tabs
-  useEffect(() => {
-    const handleStorage = (event) => {
-      if (event.key === "user") {
-        if (!event.newValue) {
-          setUser(null); // Logged out in another tab
-        } else {
-          setUser(JSON.parse(event.newValue)); // User updated in another tab
-        }
+        await fetchUserData();
+      } catch {
+        setUser(null);
+        setLikedMovies([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
+    initAuth();
+  }, [fetchUserData]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, likedMovies, setLikedMovies }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, likedMovies, setLikedMovies }}>
       {children}
     </AuthContext.Provider>
   );

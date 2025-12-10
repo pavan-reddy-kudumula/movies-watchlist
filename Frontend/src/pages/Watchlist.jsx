@@ -2,7 +2,7 @@ import API from "../api";
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ConfirmModal from "../components/ConfirmModal"
 import "./Watchlist.css";
@@ -130,7 +130,6 @@ function Watchlist() {
   });
 
   useEffect(() => {
-    // We define the async function inside useEffect to handle the promise
     const fetchMovies = async () => {
       try {
         const res = await API.get(`/auth/getMovie`);
@@ -167,7 +166,7 @@ function Watchlist() {
     }
   };
 
-  if (!user) return <Navigate to="/" />;
+  if (!user) return <Navigate to="/login" />;
 
   return (
     <div className="movie-list">
@@ -195,8 +194,6 @@ function Watchlist() {
         onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
         onConfirm={confirmDelete}
       />
-
-      <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
     </div>
   );
 }

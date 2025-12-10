@@ -1,6 +1,6 @@
 import {useState, useContext} from "react"
 import API from "../api"
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {useNavigate, Link, Navigate} from "react-router-dom"
 import {AuthContext} from "../context/AuthContext"
@@ -20,16 +20,13 @@ function Signup(){
         setError("");
         setLoading(true);
         try{
-            const res = await API.post("/auth/signup", {username,email,password})
-            login(res.data.token, res.data.user)
+            await API.post("/auth/signup", {username,email,password})
+            await login()
             toast.success("Signup successful 🎉");
             navigate("/")
         }
         catch(err){
             console.log(err)
-            setUsername("")
-            setEmail("")
-            setPassword("")
             const backendMsg = err.response?.data?.msg || "Signup failed. Try again.";
             setError(backendMsg);
             toast.error(backendMsg);
@@ -74,8 +71,6 @@ function Signup(){
                     Already have an account? <Link to="/login">Login</Link>
                 </p>
             </div>
-
-            <ToastContainer position="top-right" theme="colored" autoClose={2000} />
         </div>) : (<Navigate to="/" />)}</>
     )
 }

@@ -1,15 +1,14 @@
 import express from "express"
 const router = express.Router()
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import UserModel from "../models/User.js"
 import MovieModel from "../models/Movie.js"
 import authMiddleware from "./auth.js"
 import axios from "axios"
 import { GoogleGenAI } from "@google/genai";
+import { generateToken } from "../lib/utils.js"
 
 
-const JWT_SECRET = process.env.JWT_SECRET
 const API_KEY = process.env.API_KEY;
 const url = `http://www.omdbapi.com/?apikey=${API_KEY}&t=`;
 
@@ -25,7 +24,8 @@ router.post('/api/auth/signup', async (req, res)=>{
             return res.status(400).json({ msg: "Email already in use" });
         }
 
-        const existingUsername = await UserModel.findOne({ username });
+        const normalizedUsername = username.trim();
+        const existingUsername = await UserModel.findOne({ username: normalizedUsername });
         if (existingUsername) {
             return res.status(400).json({ msg: "Username already taken" });
         }
@@ -33,16 +33,13 @@ router.post('/api/auth/signup', async (req, res)=>{
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
     
-        const newUser = new UserModel({username, email: normalizedEmail, displayEmail: email.trim(), password: hashedPassword})
+        const newUser = new UserModel({username: normalizedUsername, email: normalizedEmail, displayEmail: email.trim(), password: hashedPassword})
         await newUser.save()
-
-        const token = jwt.sign({id: newUser._id, username: newUser.username, email: newUser.email}, JWT_SECRET, {expiresIn: "7d"})
-        res.json({
-            msg: "User created successfully",
-            token,
+        generateToken(newUser._id, res)
+        res.status(201).json({
             user: {
                 id: newUser._id,
-                username: newUser.username,
+                username: newUser.normalizedUsername,
                 email: newUser.displayEmail,
             }
         });
@@ -75,10 +72,8 @@ router.post("/api/auth/login", async (req, res)=>{
         const isMatch = await bcrypt.compare(password, user.password)
         if(!isMatch) return res.status(400).json({msg: "Invalid password"})
 
-        const token = jwt.sign({id: user._id, username: user.username, email: user.email}, JWT_SECRET, {expiresIn: "7d"})
+        generateToken(user._id, res)
         res.json({
-            msg: "Login successful",
-            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -89,6 +84,20 @@ router.post("/api/auth/login", async (req, res)=>{
     catch(err){
         res.status(500).json({msg: "Server error"})
     }    
+})
+
+router.post("/api/auth/logout", (req, res) => {
+    try {
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === "development" ? "lax" : "none", 
+            secure: process.env.NODE_ENV !== "development"
+        });
+        res.status(200).json({message: "Logged out successfully"})
+    } catch(error) {
+        console.log("error in login controller ", error.message)
+        res.status(500).json({message: "Internal server error"})
+    }
 })
 
 router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
@@ -118,14 +127,14 @@ router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
 
     // 🔍 1. CHECK IF THIS MOVIE IS ALREADY LIKED
     const likedExists = await UserModel.findOne({
-      _id: req.user.id,
+      _id: req.user._id,
       "likedMovies.localId": localId
     });
 
     // 2. CHECK DUPLICATES (Using the OFFICIAL title from API)
     // We check both Title AND Director to allow remakes with the same name
     const existingMovie = await MovieModel.findOne({
-      userId: req.user.id,
+      userId: req.user._id,
       title: movieTitle,
       director: movieDirector
     });
@@ -148,7 +157,7 @@ router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
       plot: response.data.Plot,
       imdb: response.data.imdbRating,
       poster: posterImage,
-      userId: req.user.id
+      userId: req.user._id
     };
 
     const movie = new MovieModel(movieData);
@@ -172,7 +181,7 @@ router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
     // 1. Get the movie from watchlist (ensure belongs to this user)
     const movie = await MovieModel.findOne({
       _id: movieId,
-      userId: req.user.id
+      userId: req.user._id
     });
 
     if (!movie) {
@@ -186,8 +195,8 @@ router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
     const localId = `${movieTitle.trim().toLowerCase()}#${movieDirector.trim().toLowerCase()}`;
 
     // 3. Check if already liked
-    const alreadyLiked = await UserModel.findOne({
-      _id: req.user.id,
+    const alreadyLiked = await UserModel.exists({
+      _id: req.user._id,
       "likedMovies.localId": localId
     });
 
@@ -197,7 +206,7 @@ router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
 
     // 4. Add to likedMovies
     await UserModel.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       {
         $push: {
           likedMovies: {
@@ -220,10 +229,9 @@ router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
 
 router.get("/api/auth/profile", authMiddleware, async (req, res)=>{
     try {
-        const user = await UserModel.findById(req.user.id);
-        if (!user) return res.status(404).json({ msg: "User not found" });
+        const user = req.user;
 
-        res.json({ username: user.username, email: user.displayEmail });
+        res.json({ id: user._id, username: user.username, email: user.displayEmail });
     } catch (err) {
         res.status(500).json({ msg: err.message });
     }
@@ -231,7 +239,7 @@ router.get("/api/auth/profile", authMiddleware, async (req, res)=>{
 
 router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
   try {
-    const response = await MovieModel.find({ userId: req.user.id });
+    const response = await MovieModel.find({ userId: req.user._id });
     res.status(200).json({ movies: response });
   } catch (error) {
     res.status(400).json({ msg: error.message });
@@ -240,7 +248,7 @@ router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
 
 router.get("/api/auth/liked", authMiddleware, async (req, res) => {
   try {
-    const user = await UserModel.findById(req.user.id).select("likedMovies");
+    const user = await UserModel.findById(req.user._id).select("likedMovies");
     res.json(user.likedMovies || []);
   } catch (err) {
     console.error(err);
@@ -251,12 +259,12 @@ router.get("/api/auth/liked", authMiddleware, async (req, res) => {
 router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
       try {
         // 1. Fetch Watchlist (Limit to last 20 to save tokens/latency)
-        const userWatchlist = await MovieModel.find({ userId: req.user.id })
+        const userWatchlist = await MovieModel.find({ userId: req.user._id })
             .sort({ _id: -1 })
             .limit(20);
 
         // 2. Fetch User's Liked Movies
-        const userProfile = await UserModel.findById(req.user.id).select('likedMovies');
+        const userProfile = await UserModel.findById(req.user._id).select('likedMovies');
         // Get the last 20 liked movies (assuming new ones are pushed to end)
         const userLikes = userProfile ? userProfile.likedMovies.slice(-20) : [];
 
@@ -329,19 +337,14 @@ router.patch("/api/auth/like/:localId/review", authMiddleware, async (req, res) 
     const { localId } = req.params;
     const { review } = req.body;
 
-    const alreadyLiked = await UserModel.findOne({
-      _id: req.user.id,
-      "likedMovies.localId": localId
-    });
-
-    if (!alreadyLiked) {
-      return res.status(400).json({ message: "Cannot update review. Movie not liked." });
-    }
-
-    await UserModel.updateOne(
-      { _id: req.user.id, "likedMovies.localId": localId },
+    const result = await UserModel.updateOne(
+      { _id: req.user._id, "likedMovies.localId": localId },
       { $set: { "likedMovies.$.review": review } }
     );
+
+    if (result.matchedCount === 0) {
+      return res.status(400).json({ message: "Cannot update review. Movie not liked." });
+    }
 
     res.json({ message: "Review updated" });
 
@@ -353,14 +356,20 @@ router.patch("/api/auth/like/:localId/review", authMiddleware, async (req, res) 
 
 router.delete('/api/auth/deleteMovie/:id', authMiddleware, async (req, res) => {
   try {
-    const movie = await MovieModel.findById(req.params.id);
-    if (!movie || movie.userId.toString() !== req.user.id)
-      return res.status(403).json({ message: "Not allowed" });
+    const { id } = req.params;
 
-    const response = await MovieModel.findByIdAndDelete(req.params.id);
-    res.status(200).json({ msg: 'Movie deleted successfully!', movie: response });
+    const deletedMovie = await MovieModel.findOneAndDelete({
+      _id: id,
+      userId: req.user._id
+    });
+
+    if (!deletedMovie) {
+      return res.status(404).json({ message: "Movie not found or not authorized" });
+    }
+
+    res.status(200).json({ msg: 'Movie deleted successfully!', movie: deletedMovie });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(500).json({ msg: "Server error" });
   }
 });
 
@@ -368,23 +377,18 @@ router.delete("/api/auth/like/:localId", authMiddleware, async (req, res) => {
   try {
     const { localId } = req.params;
 
-    const alreadyLiked = await UserModel.findOne({
-      _id: req.user.id,
-      "likedMovies.localId": localId
-    });
-
-    if (!alreadyLiked) {
-      return res.status(400).json({ message: "Movie is not liked" });
-    }
-
-    await UserModel.findByIdAndUpdate(
-      req.user.id,
-      {
-        $pull: {
-          likedMovies: { localId }
-        }
+    const result = await UserModel.updateOne(
+      { _id: req.user._id },
+      { 
+        $pull: { 
+          likedMovies: { localId } 
+        } 
       }
     );
+
+    if (result.modifiedCount === 0) {
+      return res.status(400).json({ message: "Movie is not liked" });
+    }
 
     res.json({ message: "Movie unliked" });
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import API from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ConfirmModal from "../components/ConfirmModal";
 import './LikedMovies.css';
@@ -19,15 +19,13 @@ const LikedMovieCard = ({ movie, onRemoveClick, onUpdateReview }) => {
   const handleCardClick = () => setIsFlipped(!isFlipped);
   const handleReviewChange = (e) => setReview(e.target.value);
 
-  // Save Review to Backend
   const handleSave = (e) => {
-    e.stopPropagation(); // 🛑 Don't flip card
+    e.stopPropagation(); 
     onUpdateReview(movie.localId, review);
   };
 
-  // Remove Movie
   const handleRemove = (e) => {
-    e.stopPropagation(); // 🛑 Don't flip card
+    e.stopPropagation(); 
     onRemoveClick(movie);
   };
 
@@ -148,8 +146,6 @@ return (
         onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
         onConfirm={confirmRemove}
       />
-
-      <ToastContainer position="bottom-right" theme="colored" autoClose={2000} />
     </div>
   );
 }

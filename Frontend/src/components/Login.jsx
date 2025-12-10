@@ -1,7 +1,7 @@
 import {useState, useContext} from "react"
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import API from "../api"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { AuthContext } from "../context/AuthContext"
 import "./AuthForm.css"
@@ -11,16 +11,16 @@ function Login(){
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
+    const { user, login } = useContext(AuthContext)
     const navigate = useNavigate();
-    const { user,login } = useContext(AuthContext)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError("")
         setLoading(true)
         try{
-            const res = await API.post("/auth/login", {email, password})
-            login(res.data.token, res.data.user); 
+            await API.post("/auth/login", {email, password})
+            await login() 
             toast.success("Login successful 🎉");
             navigate("/")
         }
@@ -29,8 +29,6 @@ function Login(){
             const backendMsg = err.response?.data?.msg || "Login failed. Try again.";
             setError(backendMsg);
             toast.error(backendMsg);
-            setEmail("")
-            setPassword("")
         }
         finally{
             setLoading(false)
@@ -69,7 +67,6 @@ function Login(){
                     Don't have an account? <Link to="/signup">Sign Up</Link>
                 </p>
             </div>
-            <ToastContainer position="top-right" theme="colored" autoClose={2000} />
         </div>) : (<Navigate to="/" />)}
         </>
     )

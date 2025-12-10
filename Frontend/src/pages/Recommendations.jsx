@@ -1,16 +1,14 @@
-import { useState, useContext, useEffect } from 'react'; // 1. Import useEffect
+import { useState, useContext, useEffect } from 'react';
 import API from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Recommendations.css';
 
 function Recommendations() {
     const { user } = useContext(AuthContext);
     
-    // 2. Initialize state by reading from sessionStorage first.
-    // This is a "lazy initializer" - it only runs on the first render.
     const [recommendations, setRecommendations] = useState(() => {
         const saved = sessionStorage.getItem('recommendations');
         return saved ? JSON.parse(saved) : [];
@@ -24,9 +22,7 @@ function Recommendations() {
     const [error, setError] = useState('');
     const [addingMovieTitle, setAddingMovieTitle] = useState(null);
 
-    // 3. Use useEffect to SAVE data to sessionStorage whenever state changes.
     useEffect(() => {
-        // We store the data as a JSON string because storage can only hold strings.
         sessionStorage.setItem('recommendations', JSON.stringify(recommendations));
     }, [recommendations]);
 
@@ -37,9 +33,7 @@ function Recommendations() {
     const handleGetRecommendations = async () => {
         setIsLoading(true);
         setError('');
-        // Clear previous state when fetching new recommendations
         setRecommendations([]);
-        setAddedMovies([]);
 
         try {
             const response = await API.get('/auth/recommendations');
@@ -71,7 +65,6 @@ function Recommendations() {
         return <Navigate to="/login" />;
     }
 
-    // The rest of your JSX remains exactly the same.
     return (
         <div className="recommendations-container">
             <h1>AI Movie Recommender</h1>
@@ -110,7 +103,6 @@ function Recommendations() {
                     </ul>
                 </div>
             )}
-            <ToastContainer position="bottom-right" autoClose={2000} theme="colored" />
         </div>
     );
 }
