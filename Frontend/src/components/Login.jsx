@@ -22,7 +22,7 @@ function Login(){
             const res = await API.post("/auth/login", {email, password})
             login(res.data.token, res.data.user); 
             toast.success("Login successful 🎉");
-            navigate("/profile")
+            navigate("/")
         }
         catch(err){
             console.error(err)

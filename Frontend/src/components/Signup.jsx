@@ -12,7 +12,7 @@ function Signup(){
     const [password, setPassword] = useState("");  
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);  
-    const {user} = useContext(AuthContext)
+    const {user, login} = useContext(AuthContext)
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -20,9 +20,10 @@ function Signup(){
         setError("");
         setLoading(true);
         try{
-            await API.post("/auth/signup", {username,email,password})
-            toast.success("Signup successful! 🎉 Please log in.");
-            navigate("/login")
+            const res = await API.post("/auth/signup", {username,email,password})
+            login(res.data.token, res.data.user)
+            toast.success("Signup successful 🎉");
+            navigate("/")
         }
         catch(err){
             console.log(err)

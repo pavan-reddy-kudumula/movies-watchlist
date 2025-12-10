@@ -35,7 +35,17 @@ router.post('/api/auth/signup', async (req, res)=>{
     
         const newUser = new UserModel({username, email: normalizedEmail, displayEmail: email.trim(), password: hashedPassword})
         await newUser.save()
-        res.json({msg: "User created successfully"})
+
+        const token = jwt.sign({id: newUser._id, username: newUser.username, email: newUser.email}, JWT_SECRET, {expiresIn: "7d"})
+        res.json({
+            msg: "User created successfully",
+            token,
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.displayEmail,
+            }
+        });
     }
     catch(err){
         console.error(err)
@@ -67,6 +77,7 @@ router.post("/api/auth/login", async (req, res)=>{
 
         const token = jwt.sign({id: user._id, username: user.username, email: user.email}, JWT_SECRET, {expiresIn: "7d"})
         res.json({
+            msg: "Login successful",
             token,
             user: {
                 id: user._id,
@@ -79,26 +90,6 @@ router.post("/api/auth/login", async (req, res)=>{
         res.status(500).json({msg: "Server error"})
     }    
 })
-
-router.get("/api/auth/profile", authMiddleware, async (req, res)=>{
-    try {
-        const user = await UserModel.findById(req.user.id);
-        if (!user) return res.status(404).json({ msg: "User not found" });
-
-        res.json({ username: user.username, email: user.email });
-    } catch (err) {
-        res.status(500).json({ msg: err.message });
-    }
-})
-
-router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
-  try {
-    const response = await MovieModel.find({ userId: req.user.id });
-    res.status(200).json({ movies: response });
-  } catch (error) {
-    res.status(400).json({ msg: error.message });
-  }
-});
 
 router.post('/api/auth/postMovie/:title', authMiddleware, async (req, res) => {
   try {
@@ -226,61 +217,24 @@ router.post("/api/auth/like/:movieId", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-  
-router.delete("/api/auth/like/:localId", authMiddleware, async (req, res) => {
-  try {
-    const { localId } = req.params;
 
-    const alreadyLiked = await UserModel.findOne({
-      _id: req.user.id,
-      "likedMovies.localId": localId
-    });
+router.get("/api/auth/profile", authMiddleware, async (req, res)=>{
+    try {
+        const user = await UserModel.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: "User not found" });
 
-    if (!alreadyLiked) {
-      return res.status(400).json({ message: "Movie is not liked" });
+        res.json({ username: user.username, email: user.displayEmail });
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
     }
+})
 
-    await UserModel.findByIdAndUpdate(
-      req.user.id,
-      {
-        $pull: {
-          likedMovies: { localId }
-        }
-      }
-    );
-
-    res.json({ message: "Movie unliked" });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-router.patch("/api/auth/like/:localId/review", authMiddleware, async (req, res) => {
+router.get('/api/auth/getMovie', authMiddleware, async (req, res) => {
   try {
-    const { localId } = req.params;
-    const { review } = req.body;
-
-    const alreadyLiked = await UserModel.findOne({
-      _id: req.user.id,
-      "likedMovies.localId": localId
-    });
-
-    if (!alreadyLiked) {
-      return res.status(400).json({ message: "Cannot update review. Movie not liked." });
-    }
-
-    await UserModel.updateOne(
-      { _id: req.user.id, "likedMovies.localId": localId },
-      { $set: { "likedMovies.$.review": review } }
-    );
-
-    res.json({ message: "Review updated" });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    const response = await MovieModel.find({ userId: req.user.id });
+    res.status(200).json({ movies: response });
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
   }
 });
 
@@ -370,6 +324,33 @@ router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
     }
 });
 
+router.patch("/api/auth/like/:localId/review", authMiddleware, async (req, res) => {
+  try {
+    const { localId } = req.params;
+    const { review } = req.body;
+
+    const alreadyLiked = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    if (!alreadyLiked) {
+      return res.status(400).json({ message: "Cannot update review. Movie not liked." });
+    }
+
+    await UserModel.updateOne(
+      { _id: req.user.id, "likedMovies.localId": localId },
+      { $set: { "likedMovies.$.review": review } }
+    );
+
+    res.json({ message: "Review updated" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.delete('/api/auth/deleteMovie/:id', authMiddleware, async (req, res) => {
   try {
     const movie = await MovieModel.findById(req.params.id);
@@ -380,6 +361,36 @@ router.delete('/api/auth/deleteMovie/:id', authMiddleware, async (req, res) => {
     res.status(200).json({ msg: 'Movie deleted successfully!', movie: response });
   } catch (error) {
     res.status(400).json({ msg: error.message });
+  }
+});
+
+router.delete("/api/auth/like/:localId", authMiddleware, async (req, res) => {
+  try {
+    const { localId } = req.params;
+
+    const alreadyLiked = await UserModel.findOne({
+      _id: req.user.id,
+      "likedMovies.localId": localId
+    });
+
+    if (!alreadyLiked) {
+      return res.status(400).json({ message: "Movie is not liked" });
+    }
+
+    await UserModel.findByIdAndUpdate(
+      req.user.id,
+      {
+        $pull: {
+          likedMovies: { localId }
+        }
+      }
+    );
+
+    res.json({ message: "Movie unliked" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
