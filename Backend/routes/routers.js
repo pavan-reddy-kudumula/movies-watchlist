@@ -14,6 +14,10 @@ const url = `http://www.omdbapi.com/?apikey=${API_KEY}&t=`;
 
 const genAI = new GoogleGenAI({});
 
+router.get("/api/ping", (req, res) => {
+    res.status(200).json({ message: "pong" });
+});
+
 router.post('/api/auth/signup', async (req, res)=>{
     try{
         const {username, email, password} = req.body

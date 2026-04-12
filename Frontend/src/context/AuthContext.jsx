@@ -21,6 +21,7 @@ export default function AuthProvider({ children }) {
       console.error("Failed to fetch user data:", err);
       setUser(null);
       setLikedMovies([]);
+      throw err;
     }
   }, []);
 
