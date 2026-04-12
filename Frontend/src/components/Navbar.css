@@ -1,9 +1,10 @@
 /* --- Main Navbar Container --- */
 .navbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: 1rem;
   background-color: var(--nav-bg);
   box-shadow: var(--box-shadow);
   position: sticky;
@@ -21,17 +22,36 @@
   text-decoration: none;
   cursor: pointer;
   
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
 }
 
 /* --- Navigation Links (Desktop Default) --- */
+.nav-links-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: var(--nav-bg);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1003;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
+}
+
 .nav-links-container ul {
   list-style: none;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 2rem;
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
 /* Link Styles */
@@ -153,102 +173,55 @@ input:checked + .slider:before {
 
 /* Initially hide Hamburger and Close Icon on Desktop */
 .hamburger, .close-icon, .overlay {
+  display: block;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+  z-index: 1002;
+}
+
+.hamburger .bar {
+  width: 100%;
+  height: 3px;
+  background-color: var(--nav-text);
+  border-radius: 10px;
+}
+
+.close-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  color: var(--nav-text);
+  cursor: pointer;
+}
+
+.overlay {
   display: none;
 }
 
-/* MOBILE VIEW */
+.nav-links-container.active {
+  transform: translateX(0);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  animation: fadeIn 0.3s;
+}
+
 @media (max-width: 900px) {
-  
-  .navbar {
-    padding: 1rem;
-    /* Grid layout ensures true centering regardless of side element widths */
-    display: grid; 
-    grid-template-columns: 40px 1fr 40px; /* Left, Center, Right */
-    align-items: center;
-  }
-
-  .logo {
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .navbar-actions {
-    justify-self: end; /* Pushes actions to the far right */
-    gap: 0.8rem;
-    width: auto;
-  }
-
-  /* 1. Hamburger Icon */
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 21px;
-    cursor: pointer;
-    z-index: 1002;
-  }
-
-  .hamburger .bar {
-    width: 100%;
-    height: 3px;
-    background-color: var(--nav-text);
-    border-radius: 10px;
-  }
-
-  /* 2. Sidebar (Open from LEFT) */
-  .nav-links-container {
-    position: fixed;
-    top: 0;
-    left: 0; /* 👈 Changed from right to left */
-    height: 100vh;
-    width: 250px;
-    background-color: var(--nav-bg);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    
-    transform: translateX(-100%); /* 👈 Start off-screen LEFT */
-    transition: transform 0.3s ease-in-out;
-    
-    z-index: 1003;
-    display: flex;
-    flex-direction: column;
-    padding-top: 60px;
-  }
-
-  .nav-links-container.active {
-    transform: translateX(0); /* Slide in to 0 */
-  }
-
-  /* 3. Close Button Position */
-  .close-icon {
-    display: block;
-    position: absolute;
-    top: 20px;
-    right: 20px; /* Keep it on the right side of the sidebar */
-    font-size: 2rem;
-    color: var(--nav-text);
-    cursor: pointer;
-  }
-
-  .nav-links-container ul {
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-    width: 100%;
-  }
-
-  .overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
-    animation: fadeIn 0.3s;
-  }
-  
   .toggle-label {
     display: none;
   }
