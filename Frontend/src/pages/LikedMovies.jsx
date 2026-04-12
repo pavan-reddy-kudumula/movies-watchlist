@@ -64,9 +64,23 @@ const LikedMovieCard = ({ movie, onRemoveClick, onUpdateReview }) => {
   );
 };
 
+const LikedMoviesSkeletonCards = ({ count = 6 }) => (
+  <>
+    {Array.from({ length: count }).map((_, idx) => (
+      <div key={idx} className="flip-card skeleton-card" aria-hidden="true">
+        <div className="flip-card-inner">
+          <div className="flip-card-front skeleton-face">
+            <div className="liked-skeleton-shimmer" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </>
+);
+
 // --- Main Page Component ---
 function LikedMovies() {
-    const { user, likedMovies, setLikedMovies } = useContext(AuthContext);
+    const { user, loading, likedMovies, setLikedMovies } = useContext(AuthContext);
 
     const [modalConfig, setModalConfig] = useState({
       isOpen: false,
@@ -124,7 +138,9 @@ return (
       
       <h1 className="liked-header">❤️ Your Favorites</h1>
 
-      {likedMovies.length === 0 ? (
+      {loading ? (
+        <LikedMoviesSkeletonCards />
+      ) : likedMovies.length === 0 ? (
         <div className="empty-state">
           <p>You haven't liked any movies yet.</p>
         </div>

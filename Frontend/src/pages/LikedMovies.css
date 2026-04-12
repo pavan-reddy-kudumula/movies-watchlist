@@ -25,6 +25,41 @@
   font-size: 1.2rem;
 }
 
+.skeleton-card .flip-card-inner {
+  transform: none !important;
+}
+
+.skeleton-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--card-bg);
+}
+
+.liked-skeleton-shimmer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0.03) 8%,
+    rgba(255, 255, 255, 0.08) 18%,
+    rgba(255, 255, 255, 0.03) 33%
+  );
+  background-size: 220% 100%;
+  animation: likedShimmer 1.2s linear infinite;
+  border-radius: 12px;
+}
+
+@keyframes likedShimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .flip-card {
   background-color: transparent;
   width: 100%;
