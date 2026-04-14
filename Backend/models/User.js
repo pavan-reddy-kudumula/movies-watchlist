@@ -12,10 +12,11 @@ const UserSchema = new mongoose.Schema(
                 localId: { type: String, required: true },
                 title: { type: String, required: true },
                 poster: { type: String, required: true },
-                review: { type: String, default: "" }
+                review: { type: String, default: "" },
+                folderId: { type: mongoose.Schema.Types.ObjectId, ref: "Folder", default: null }
             }
-        ]
-    })
+        ],
+    }, {timestamps: true})
 
 const UserModel = mongoose.model("User", UserSchema);
 export default UserModel;

@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="bar"></div>
       </div>
 
-      <NavLink to="/" className="logo" onClick={closeMenu}>🎬 Movies Watchlist</NavLink>
+      <NavLink to="/" className="logo" onClick={closeMenu}>Movies Watchlist</NavLink>
 
       {/* --- NAVIGATION LINKS CONTAINER --- */}
       {/* We add the 'active' class if menu is open */}

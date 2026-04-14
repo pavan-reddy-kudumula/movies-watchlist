@@ -9,7 +9,7 @@ const app = express()
 const MONGO_URI = process.env.MONGO_URI
 const PORT = process.env.PORT
 
-app.use(express.json())
+app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins = [
     "http://localhost:5173",
