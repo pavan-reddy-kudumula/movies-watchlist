@@ -1,5 +1,6 @@
 import express from "express"
 const router = express.Router()
+import mongoose from "mongoose"
 import UserModel from "../models/User.js"
 import MovieModel from "../models/Movie.js"
 import authMiddleware from "./auth.js"
@@ -13,6 +14,21 @@ const genAI = new GoogleGenAI({});
 
 router.get("/api/ping", (req, res) => {
     res.status(200).json({ message: "pong" });
+});
+
+router.use((req, res, next) => {
+    if (req.path === "/api/ping") {
+        return next();
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({
+            error: "Database temporarily unavailable",
+            retryAfter: 30
+        });
+    }
+
+    next();
 });
 
 router.use(authRouter);
