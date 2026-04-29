@@ -111,4 +111,32 @@ router.delete("/api/auth/like/:localId", authMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/api/auth/like/delete/items", authMiddleware, async (req, res) => {
+  try {
+    const { movieIds = [] } = req.body;
+
+    if (movieIds.length === 0) {
+      return res.status(400).json({ msg: "No IDs provided for deletion" });
+    }
+
+    const result = await UserModel.updateOne(
+      { _id: req.user._id },
+      {
+        $pull: {
+          likedMovies: { localId: { $in: movieIds } }
+        }
+      }
+    );
+
+    res.status(200).json({
+      msg: "Deleted successfully",
+      deletedCount: result.modifiedCount
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+})
+
 export default router;

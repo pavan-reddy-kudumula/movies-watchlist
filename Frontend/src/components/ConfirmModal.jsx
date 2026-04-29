@@ -1,21 +1,28 @@
 import React from 'react';
 import './ConfirmModal.css';
 
-const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  isProcessing = false,
+}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={isProcessing ? undefined : onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>{title}</h2>
         <p>{message}</p>
         
         <div className="modal-actions">
-          <button className="modal-btn cancel" onClick={onClose}>
+          <button className="modal-btn cancel" onClick={onClose} disabled={isProcessing}>
             Cancel
           </button>
-          <button className="modal-btn confirm" onClick={onConfirm}>
-            Delete
+          <button className="modal-btn confirm" onClick={onConfirm} disabled={isProcessing}>
+            {isProcessing ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </div>
