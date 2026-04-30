@@ -39,6 +39,7 @@ export default function Navbar() {
               <li><NavLink to="/profile" onClick={closeMenu}>Profile</NavLink></li>
               <li><NavLink to="/addmovies" onClick={closeMenu}>Add movies</NavLink></li>
               <li><NavLink to="/watchlist" onClick={closeMenu}>Watchlist</NavLink></li>
+              <li><NavLink to="/folders" onClick={closeMenu}>Folders</NavLink></li>
               <li><NavLink to="/recommendations" onClick={closeMenu}>AI Recommendations</NavLink></li>
               <li><NavLink to="/favorites" onClick={closeMenu}>Favorites</NavLink></li>
             </>
