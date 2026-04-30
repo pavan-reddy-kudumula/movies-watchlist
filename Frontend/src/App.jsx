@@ -9,6 +9,7 @@ import Watchlist from "./pages/Watchlist"
 import HomePage from "./pages/Homepage"
 import Recommendations from "./pages/Recommendations"
 import LikedMovies from "./pages/LikedMovies";
+import Folders from "./pages/Folders";
 import {AuthContext} from "./context/AuthContext"
 import { ToastContainer } from "react-toastify"; 
 import "react-toastify/dist/ReactToastify.css";
@@ -69,6 +70,11 @@ function App() {
         <Route
           path="/favorites"
           element={user ? <LikedMovies /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/folders"
+          element={user ? <Folders /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>

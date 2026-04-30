@@ -38,13 +38,16 @@ const MovieCard = ({ movie, onDeleteClick }) => {
       return;
     }
 
-    await API.post(`/auth/like/${movie._id}`);
+    await API.post(`/auth/like/${movie._id}`, {
+      folderId: movie.folderId || undefined,
+    });
     toast.success("Added to Favorites");
     const newLiked = {
       localId,
       title: movie.title,
       poster: movie.poster,
       review: "",
+      folderId: movie.folderId || null,
     };
 
     setLikedMovies((prev) => [...prev, newLiked]);
