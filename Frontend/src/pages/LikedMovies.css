@@ -222,24 +222,14 @@
 }
 /* Specific Style for "Select" button */
 .select-btn {
-  background: #374151; /* A neutral dark grey to contrast with the blue/red actions */
+  background: #4b5563; /* A neutral dark grey to contrast with the blue/red actions */
   color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .select-btn:hover {
-  background: #4b5563;
+  background: #374151;
   box-shadow: 0 0 12px rgba(75, 85, 99, 0.3);
-}
-
-/* Specific Style for "Cancel" button */
-.cancel-btn {
-  background: #6b7280; /* Muted grey */
-  color: white;
-}
-
-.cancel-btn:hover {
-  background: #4b5563;
 }
 
 /* Specific Style for "Select All" */

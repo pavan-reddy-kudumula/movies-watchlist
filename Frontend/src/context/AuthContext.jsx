@@ -24,6 +24,7 @@ export default function AuthProvider({ children }) {
       console.error("Failed to fetch user data:", err);
       setUser(null);
       setLikedMovies([]);
+      setUserFolders([]);
       throw err;
     }
   }, []);
@@ -62,7 +63,18 @@ export default function AuthProvider({ children }) {
   }, [fetchUserData]);
 
   return (
-    <AuthContext.Provider value={{ user, userFolders, loading, login, logout, likedMovies, setLikedMovies }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        userFolders,
+        setUserFolders,
+        loading,
+        login,
+        logout,
+        likedMovies,
+        setLikedMovies
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -333,6 +333,7 @@
 
 .delete-btn:hover {
   background: #b91c1c !important;
+  transform: translateY(0) !important;
 }
 
 .folder-btn, .delete-btn {
@@ -350,7 +351,7 @@
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
   position: relative;
   /* Ensure no layout shifting */
-  transform: translateZ(0); 
+  transform: translateZ(0);  
 }
 
 /* Hover: Change color and glow, but stay still */

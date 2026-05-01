@@ -68,13 +68,13 @@
 }
 
 .modal-btn.confirm {
-  background-color: #ef4444;
-  color: white;
-  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+  background-color: var(--delete-btn-bg) !important;
+  color: white !important;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2) !important;
 }
 
 .modal-btn.confirm:hover {
-  background-color: #dc2626;
+  background-color: var(--delete-btn-hover-bg) !important;
 }
 
 /* Animations */

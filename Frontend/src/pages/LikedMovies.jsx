@@ -265,7 +265,7 @@ function LikedMovies() {
             />
 
             <button
-              className={`action-btn ${isSelectionMode ? "cancel-btn" : "select-btn"}`}
+              className={`action-btn select-btn`}
               onClick={toggleSelectionMode}
             >
               {isSelectionMode ? "Cancel" : "Select"}

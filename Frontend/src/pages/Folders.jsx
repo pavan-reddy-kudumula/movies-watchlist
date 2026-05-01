@@ -9,10 +9,9 @@ import { Trash2, Pencil } from "lucide-react";
 const defaultFolderForm = { name: "" };
 
 function Folders() {
-  const { user, likedMovies, setLikedMovies } = useContext(AuthContext);
+  const { user, likedMovies, setLikedMovies, userFolders, setUserFolders } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
-  const [folders, setFolders] = useState([]);
   const [movies, setMovies] = useState([]);
   const [selectedFolderId, setSelectedFolderId] = useState("");
   const [selectedFolderItems, setSelectedFolderItems] = useState({
@@ -36,9 +35,14 @@ function Folders() {
   const [removeMovieSelection, setRemoveMovieSelection] = useState([]);
   const [removeLikedSelection, setRemoveLikedSelection] = useState([]);
 
+  const sortFolders = useCallback(
+    (list) => [...list].sort((a, b) => a.name.localeCompare(b.name)),
+    []
+  );
+
   const currentFolder = useMemo(
-    () => folders.find((folder) => folder.id === selectedFolderId) || null,
-    [folders, selectedFolderId]
+    () => userFolders.find((folder) => folder.id === selectedFolderId) || null,
+    [userFolders, selectedFolderId]
   );
 
   const fetchLikedMovies = useCallback(async () => {
@@ -47,13 +51,6 @@ function Folders() {
     setLikedMovies(liked);
     return liked;
   }, [setLikedMovies]);
-
-  const fetchFolders = useCallback(async () => {
-    const foldersRes = await API.get("/auth/folders");
-    const fetchedFolders = foldersRes.data?.folders || [];
-    setFolders(fetchedFolders);
-    return fetchedFolders;
-  }, []);
 
   const fetchWatchlistMovies = useCallback(async () => {
     const moviesRes = await API.get("/auth/getMovie");
@@ -76,26 +73,22 @@ function Folders() {
   }, []);
 
   const refreshData = useCallback(async () => {
-    const [fetchedFolders] = await Promise.all([
-      fetchFolders(),
-      fetchWatchlistMovies(),
-      fetchLikedMovies()
-    ]);
+    await Promise.all([fetchWatchlistMovies(), fetchLikedMovies()]);
 
-    if (!fetchedFolders.length) {
+    if (!userFolders.length) {
       setSelectedFolderId("");
       return;
     }
 
-    const currentSelectionIsValid = fetchedFolders.some(
+    const currentSelectionIsValid = userFolders.some(
       (folder) => folder.id === selectedFolderId
     );
 
     if (!selectedFolderId || !currentSelectionIsValid) {
-      const preferred = fetchedFolders.find((folder) => folder.isDefault) || fetchedFolders[0];
+      const preferred = userFolders.find((folder) => folder.isDefault) || userFolders[0];
       setSelectedFolderId(preferred.id);
     }
-  }, [fetchFolders, fetchLikedMovies, fetchWatchlistMovies, selectedFolderId]);
+  }, [fetchLikedMovies, fetchWatchlistMovies, selectedFolderId, userFolders]);
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -116,6 +109,22 @@ function Folders() {
   }, [refreshData, user]);
 
   useEffect(() => {
+    if (!userFolders.length) {
+      setSelectedFolderId("");
+      return;
+    }
+
+    const currentSelectionIsValid = userFolders.some(
+      (folder) => folder.id === selectedFolderId
+    );
+
+    if (!selectedFolderId || !currentSelectionIsValid) {
+      const preferred = userFolders.find((folder) => folder.isDefault) || userFolders[0];
+      setSelectedFolderId(preferred.id);
+    }
+  }, [selectedFolderId, userFolders]);
+
+  useEffect(() => {
     const loadSelectedFolderItems = async () => {
       try {
         await fetchFolderItems(selectedFolderId);
@@ -125,9 +134,7 @@ function Folders() {
       }
     };
 
-    if (selectedFolderId) {
-      loadSelectedFolderItems();
-    }
+    loadSelectedFolderItems();
   }, [fetchFolderItems, selectedFolderId]);
 
   const unassignedMovies = useMemo(
@@ -146,6 +153,26 @@ function Folders() {
     );
   };
 
+  const areAllSelected = (items, key, selectedValues) => {
+    const itemIds = items.map((item) => item[key]);
+    return itemIds.length > 0 && itemIds.every((id) => selectedValues.includes(id));
+  };
+
+  const toggleSelectAllItems = (items, key, setSelectedValues) => {
+    const itemIds = items.map((item) => item[key]);
+
+    if (!itemIds.length) return;
+
+    setSelectedValues((prev) => {
+      const shouldClear = itemIds.every((id) => prev.includes(id));
+      if (shouldClear) {
+        return prev.filter((id) => !itemIds.includes(id));
+      }
+
+      return [...new Set([...prev, ...itemIds])];
+    });
+  };
+
   const handleCreateFolder = async (event) => {
     event.preventDefault();
 
@@ -161,8 +188,8 @@ function Folders() {
       setCreateForm(defaultFolderForm);
       toast.success("Folder created");
 
-      await refreshData();
       if (createdFolder?.id) {
+        setUserFolders((prev) => sortFolders([...prev, createdFolder]));
         setSelectedFolderId(createdFolder.id);
       }
     } catch (err) {
@@ -187,10 +214,17 @@ function Folders() {
     }
 
     try {
-      await API.patch(`/auth/folders/${folderId}`, { name: editingName.trim() });
+      const response = await API.patch(`/auth/folders/${folderId}`, { name: editingName.trim() });
+      const updatedFolder = response.data?.folder;
+
+      if (updatedFolder?.id) {
+        setUserFolders((prev) =>
+          sortFolders(prev.map((folder) => (folder.id === folderId ? updatedFolder : folder)))
+        );
+      }
+
       toast.success("Folder renamed");
       cancelRename();
-      await refreshData();
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not rename folder");
     }
@@ -221,7 +255,19 @@ function Folders() {
       setRemoveMovieSelection([]);
       setRemoveLikedSelection([]);
 
-      await refreshData();
+      setUserFolders((prev) => {
+        const updatedFolders = prev.filter((folder) => folder.id !== deleteModal.folderId);
+
+        if (selectedFolderId === deleteModal.folderId) {
+          const preferred =
+            updatedFolders.find((folder) => folder.isDefault) || updatedFolders[0] || null;
+          setSelectedFolderId(preferred ? preferred.id : "");
+        }
+
+        return updatedFolders;
+      });
+
+      await Promise.all([fetchWatchlistMovies(), fetchLikedMovies()]);
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not delete folder");
     }
@@ -317,7 +363,7 @@ function Folders() {
               onChange={(e) => setSelectedFolderId(e.target.value)}
               className="folder-dropdown"
             >
-              {folders.map((folder) => (
+              {userFolders.map((folder) => (
                 <option key={folder.id} value={folder.id}>
                   {folder.name}{folder.isDefault ? " (Default)" : ""}
                 </option>
@@ -382,12 +428,17 @@ function Folders() {
           <h2>{currentFolder ? currentFolder.name : "Select a folder"}</h2>
 
           <div className="folder-items-actions">
-            <button type="button" onClick={addSelectedItemsToFolder} disabled={!selectedFolderId}>
-              Add selected unassigned items
+            <button
+              type="button"
+              className="add-items-btn"
+              onClick={addSelectedItemsToFolder}
+              disabled={!selectedFolderId}
+            >
+              Add selected folder items
             </button>
             <button
               type="button"
-              className="ghost-btn"
+              className="remove-items-btn"
               onClick={removeSelectedItemsFromFolder}
               disabled={!selectedFolderId}
             >
@@ -397,7 +448,17 @@ function Folders() {
 
           <div className="items-columns">
             <div className="items-group">
-              <h3>Unassigned Watchlist Movies</h3>
+              <div className="items-group-header">
+                <h3>Unassigned Watchlist Movies</h3>
+                <button
+                  type="button"
+                  className="select-all-btn"
+                  disabled={!unassignedMovies.length}
+                  onClick={() => toggleSelectAllItems(unassignedMovies, "_id", setAddMovieSelection)}
+                >
+                  {areAllSelected(unassignedMovies, "_id", addMovieSelection) ? "Deselect all" : "Select all"}
+                </button>
+              </div>
               {unassignedMovies.length === 0 ? (
                 <p className="items-empty">No unassigned watchlist movies.</p>
               ) : (
@@ -419,7 +480,21 @@ function Folders() {
             </div>
 
             <div className="items-group">
-              <h3>Unassigned Favorites</h3>
+              <div className="items-group-header">
+                <h3>Unassigned Favorites</h3>
+                <button
+                  type="button"
+                  className="select-all-btn"
+                  disabled={!unassignedLikedMovies.length}
+                  onClick={() =>
+                    toggleSelectAllItems(unassignedLikedMovies, "localId", setAddLikedSelection)
+                  }
+                >
+                  {areAllSelected(unassignedLikedMovies, "localId", addLikedSelection)
+                    ? "Deselect all"
+                    : "Select all"}
+                </button>
+              </div>
               {unassignedLikedMovies.length === 0 ? (
                 <p className="items-empty">No unassigned favorites.</p>
               ) : (
@@ -443,7 +518,21 @@ function Folders() {
 
           <div className="items-columns">
             <div className="items-group">
-              <h3>Movies in this folder</h3>
+              <div className="items-group-header">
+                <h3>Movies in this folder</h3>
+                <button
+                  type="button"
+                  className="select-all-btn"
+                  disabled={!selectedFolderItems.movies.length}
+                  onClick={() =>
+                    toggleSelectAllItems(selectedFolderItems.movies, "_id", setRemoveMovieSelection)
+                  }
+                >
+                  {areAllSelected(selectedFolderItems.movies, "_id", removeMovieSelection)
+                    ? "Deselect all"
+                    : "Select all"}
+                </button>
+              </div>
               {selectedFolderItems.movies.length === 0 ? (
                 <p className="items-empty">No watchlist movies in this folder.</p>
               ) : (
@@ -465,7 +554,25 @@ function Folders() {
             </div>
 
             <div className="items-group">
-              <h3>Favorites in this folder</h3>
+              <div className="items-group-header">
+                <h3>Favorites in this folder</h3>
+                <button
+                  type="button"
+                  className="select-all-btn"
+                  disabled={!selectedFolderItems.likedMovies.length}
+                  onClick={() =>
+                    toggleSelectAllItems(
+                      selectedFolderItems.likedMovies,
+                      "localId",
+                      setRemoveLikedSelection
+                    )
+                  }
+                >
+                  {areAllSelected(selectedFolderItems.likedMovies, "localId", removeLikedSelection)
+                    ? "Deselect all"
+                    : "Select all"}
+                </button>
+              </div>
               {selectedFolderItems.likedMovies.length === 0 ? (
                 <p className="items-empty">No favorites in this folder.</p>
               ) : (
