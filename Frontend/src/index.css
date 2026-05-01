@@ -66,8 +66,8 @@ html.dark-mode {
   --slider-checked-bg: var(--primary-color);
   --error-color: #f87171;
   --error-background-color: #452323;
-  --delete-btn-bg: #f87171;
-  --delete-btn-hover-bg: #ef4444;
+  --delete-btn-bg: #f74a4a;
+  --delete-btn-hover-bg: #f42828;
 }
 
 /* --- Global Body Styles --- */

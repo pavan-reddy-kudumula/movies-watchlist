@@ -11,15 +11,15 @@
 /* --- Header & Empty State (Full Width) --- */
 .watchlist-header {
   grid-column: 1 / -1; 
-  text-align: center;
+  text-align: left;
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   color: var(--text-color);
 }
 
 .empty-state {
   grid-column: 1 / -1;
-  text-align: center;
+  text-align: left;
   margin-top: 3rem;
   color: var(--label-color);
   font-size: 1.2rem;
@@ -213,6 +213,162 @@
   background-color: rgba(239, 68, 68, 0.1);
 }
 
+/* --- Selection Controls Layout --- */
+.watchlist-controls-bar {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 2rem 1rem 2rem;
+  display: flex;
+  flex-direction: row; /* Change from column to row */
+  justify-content: space-between; /* Pushes header left, buttons right */
+  align-items: center; /* Vertically centers the header and buttons */
+  gap: 1rem;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.selection-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px; /* Standardize gap with action-wrapper */
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 12px; /* Matches Folder/Delete */
+  border: none; /* Removing border to match primary action style */
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Specific Style for "Select" button */
+.select-btn {
+  background: #374151; /* A neutral dark grey to contrast with the blue/red actions */
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.select-btn:hover {
+  background: #4b5563;
+  box-shadow: 0 0 12px rgba(75, 85, 99, 0.3);
+}
+
+/* Specific Style for "Cancel" button */
+.cancel-btn {
+  background: #6b7280; /* Muted grey */
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #4b5563;
+}
+
+/* Specific Style for "Select All" */
+.select-all {
+  background: #3b82f6; /* Blue to match Folder but slightly different shade if desired */
+  color: white;
+}
+
+.select-all:hover {
+  background: #2563eb;
+}
+
+/* --- Checkbox Styling --- */
+.selection-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 20; /* Higher than backface buttons */
+}
+
+.card-main-checkbox {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: #3b82f6; /* Modern Blue */
+  /* Remove default styling for a cleaner look if desired */
+  filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));
+}
+
+/* --- Visual Feedback for Selection --- */
+.selected-glow .flip-card-inner {
+  box-shadow: 0 0 15px 2px #3b82f6;
+  border: 2px solid #3b82f6;
+}
+
+/* Prevent flipping in selection mode via CSS logic if needed */
+.flip-card.selected-glow {
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.action-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  /* Optional: Add a small border or margin to separate mode-toggle from actions */
+  padding-left: 8px;
+  border-left: 1px solid var(--border-color);
+}
+
+.delete-btn {
+  background: #dc2626 !important; /* Red background */
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15) !important;
+}
+
+.delete-btn:hover {
+  background: #b91c1c !important;
+  transform: translateY(0) !important;
+}
+
+.folder-btn, .delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #2563eb; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  position: relative;
+  /* Ensure no layout shifting */
+  transform: translateZ(0);  
+}
+
+/* Hover: Change color and glow, but stay still */
+.folder-btn:hover {
+  background: #1d4ed8;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+}
+
+/* Active: Subtle darkening instead of bouncing */
+/* .folder-btn:active {
+  background: #1e40af;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+} */
+
+/* Keep the badge animation, as it's contained inside the button */
+/* .folder-badge, .delete-badge {
+
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {
   .movie-list {
@@ -223,5 +379,17 @@
 
   .watchlist-header {
     font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .watchlist-controls-bar {
+    flex-direction: column; /* Stack on mobile for better fit */
+    text-align: center;
+  }
+  
+  .selection-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
   }
 }

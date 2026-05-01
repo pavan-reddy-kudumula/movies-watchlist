@@ -6,21 +6,25 @@ export const AuthContext = createContext();
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [likedMovies, setLikedMovies] = useState([]);
+  const [userFolders, setUserFolders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUserData = useCallback(async () => {
     try {
-      const [profileRes, likedRes] = await Promise.all([
+      const [profileRes, likedRes, folderRes] = await Promise.all([
         API.get("/auth/profile"),
-        API.get("/auth/liked")
+        API.get("/auth/liked"),
+        API.get("/auth/folders")
       ]);
 
       setUser(profileRes.data);
       setLikedMovies(likedRes.data);
+      setUserFolders(folderRes.data.folders);
     } catch (err) {
       console.error("Failed to fetch user data:", err);
       setUser(null);
       setLikedMovies([]);
+      setUserFolders([]);
       throw err;
     }
   }, []);
@@ -37,6 +41,7 @@ export default function AuthProvider({ children }) {
     } finally {
       setUser(null);
       setLikedMovies([]);
+      setUserFolders([]);
       sessionStorage.clear();
     }
   };
@@ -48,6 +53,7 @@ export default function AuthProvider({ children }) {
       } catch {
         setUser(null);
         setLikedMovies([]);
+        setUserFolders([]);
       } finally {
         setLoading(false);
       }
@@ -57,7 +63,18 @@ export default function AuthProvider({ children }) {
   }, [fetchUserData]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, likedMovies, setLikedMovies }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        userFolders,
+        setUserFolders,
+        loading,
+        login,
+        logout,
+        likedMovies,
+        setLikedMovies
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

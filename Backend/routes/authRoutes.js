@@ -66,12 +66,12 @@ router.post("/api/auth/login", async (req, res) => {
     const normalizedEmail = email.trim().toLowerCase();
     const user = await UserModel.findOne({ email: normalizedEmail });
     if (!user) {
-      return res.status(400).json({ msg: "No account found with this email" });
+      return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid password" });
+      return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
     generateToken(user._id, res);

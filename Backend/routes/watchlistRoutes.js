@@ -107,4 +107,28 @@ router.delete("/api/auth/deleteMovie/:id", authMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/api/auth/delete/items", authMiddleware, async (req, res) => {
+  try {
+    const { movieIds = [] } = req.body;
+
+    if (movieIds.length === 0) {
+      return res.status(400).json({ msg: "No IDs provided for deletion" });
+    }
+
+    const result = await MovieModel.deleteMany({
+      _id: {$in: movieIds},
+      userId: req.user._id
+    })
+
+    res.status(200).json({
+      msg: "Deleted successfully",
+      deletedCount: result.deletedCount
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+})
+
 export default router;
