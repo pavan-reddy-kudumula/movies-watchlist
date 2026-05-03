@@ -5,7 +5,7 @@
   "routes": [
     {
       "src": "/sitemap.xml",
-      "dest": "https://https://dashboard.render.com/web/srv-d2un57ruibrs73frhcm0/sitemap.xml"
+      "dest": "https://movies-watchlist-ri2x.onrender.com/sitemap.xml"
     }
   ]
 }
