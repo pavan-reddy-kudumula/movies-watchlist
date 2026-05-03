@@ -1,5 +1,11 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
+  ],
+  "routes": [
+    {
+      "src": "/sitemap.xml",
+      "dest": "https://your-render-backend/sitemap.xml"
+    }
   ]
 }
