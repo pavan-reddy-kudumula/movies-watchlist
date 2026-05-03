@@ -9,6 +9,7 @@ import authRouter from "./authRoutes.js"
 import likedRouter from "./likedRoutes.js"
 import folderRouter from "./folders.js"
 import watchlistRouter from "./watchlistRoutes.js"
+import sitemapRouter from "./sitemap.js"
 
 const genAI = new GoogleGenAI({});
 
@@ -35,6 +36,7 @@ router.use(authRouter);
 router.use(likedRouter);
 router.use(folderRouter);
 router.use(watchlistRouter);
+router.use(sitemapRouter);
 
 router.get("/api/auth/recommendations", authMiddleware, async (req, res) => {
       try {
