@@ -153,19 +153,34 @@ export default function Watchlist() {
   const [movies, setMovies] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [folderFilter, setFolderFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const { user, userFolders } = useContext(AuthContext);
 
   const visibleMovies = useMemo(() => {
+    let filtered = movies;
+
+    // Apply folder filter
     if (folderFilter === "all") {
-      return movies;
+      filtered = movies;
+    } else if (folderFilter === "unassigned") {
+      filtered = movies.filter((movie) => !movie.folderId);
+    } else {
+      filtered = movies.filter((movie) => movie.folderId === folderFilter);
     }
 
-    if (folderFilter === "unassigned") {
-      return movies.filter((movie) => !movie.folderId);
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (movie) =>
+          movie.title.toLowerCase().includes(query) ||
+          movie.director.toLowerCase().includes(query) ||
+          movie.actors.toLowerCase().includes(query)
+      );
     }
 
-    return movies.filter((movie) => movie.folderId === folderFilter);
-  }, [movies, folderFilter]);
+    return filtered;
+  }, [movies, folderFilter, searchQuery]);
 
   const {
     isSelectionMode,
@@ -290,6 +305,15 @@ export default function Watchlist() {
       {movies.length > 0 && (
         <div className="watchlist-controls-bar">
           <h1 className="watchlist-header">🎬 Your Watchlist</h1>
+          <div className="search-filter-container">
+            <input
+              type="text"
+              className="search-filter-input"
+              placeholder="Search by title, director, or actors..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
           <div className="selection-buttons">
             <FolderFilter
               folders={userFolders}

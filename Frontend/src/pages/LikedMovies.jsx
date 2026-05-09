@@ -124,18 +124,30 @@ function LikedMovies() {
     useContext(AuthContext);
 
   const [folderFilter, setFolderFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const visibleLikedMovies = useMemo(() => {
+    let filtered = likedMovies;
+
+    // Apply folder filter
     if (folderFilter === "all") {
-      return likedMovies;
+      filtered = likedMovies;
+    } else if (folderFilter === "unassigned") {
+      filtered = likedMovies.filter((movie) => !movie.folderId);
+    } else {
+      filtered = likedMovies.filter((movie) => movie.folderId === folderFilter);
     }
 
-    if (folderFilter === "unassigned") {
-      return likedMovies.filter((movie) => !movie.folderId);
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((movie) =>
+        movie.title.toLowerCase().includes(query)
+      );
     }
 
-    return likedMovies.filter((movie) => movie.folderId === folderFilter);
-  }, [likedMovies, folderFilter]);
+    return filtered;
+  }, [likedMovies, folderFilter, searchQuery]);
 
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
@@ -257,6 +269,15 @@ function LikedMovies() {
       {likedMovies.length > 0 && (
         <div className="liked-movies-controls-bar">
           <h1 className="liked-header">❤️ Your Favorites</h1>
+          <div className="search-filter-container">
+            <input
+              type="text"
+              className="search-filter-input"
+              placeholder="Search by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
           <div className="selection-buttons">
             <FolderFilter
               folders={userFolders}

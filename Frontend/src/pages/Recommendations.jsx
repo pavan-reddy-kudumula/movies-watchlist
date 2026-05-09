@@ -50,7 +50,7 @@ function Recommendations() {
     const handleAddMovie = async (title) => {
         setAddingMovieTitle(title);
         try {
-            await API.post(`/auth/postMovie/${title}`);
+            await API.post('/auth/postMovie', {title});
             toast.success(`"${title}" was added to your watchlist!`);
             setAddedMovies(prevAdded => [...prevAdded, title]);
         } catch (err) {

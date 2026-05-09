@@ -19,13 +19,17 @@ router.get("/api/auth/getMovie", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/api/auth/postMovie/:title", authMiddleware, async (req, res) => {
+router.post("/api/auth/postMovie", authMiddleware, async (req, res) => {
   try {
-    const title = req.params.title;
-    const year = req.query.year;
-    const folder = await getTargetFolder(req.user._id, req.body?.folderId);
+    const { title, year, folderId } = req.body;
+    
+    if (!title) {
+      return res.status(400).json({ msg: "Title is required" });
+    }
+    
+    const folder = await getTargetFolder(req.user._id, folderId);
 
-    if (req.body?.folderId && !folder) {
+    if (folderId && !folder) {
       return res.status(404).json({ msg: "Folder not found" });
     }
 

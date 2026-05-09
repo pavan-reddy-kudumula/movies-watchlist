@@ -148,13 +148,14 @@
 }
 
 .modal-btn.confirm {
-  background: var(--primary-color);
+  background: #1557e7 !important;
+  box-shadow: none !important;
   color: #fff;
 }
 
-.modal-btn.confirm:hover:not(:disabled) {
-  background: var(--primary-hover-color);
-  box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color) 35%, transparent);
+.modal-btn.confirm:hover {
+  background: #2f6ae9 !important;
+  box-shadow: none !important;
 }
 
 .modal-btn:disabled {

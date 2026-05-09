@@ -38,15 +38,19 @@ useEffect(() => {
 const addMovie = async () => {
   setIsAdding(true)
   try {
-    let url = `/auth/postMovie/${inputText}`;
+    const payload = {
+      title: inputText,
+      folderId: selectedFolderId || null,
+      year: year.trim() || null
+    };
+    // let url = `/auth/postMovie/${inputText}`;
 
-    if (year.trim()) {
-      url += `?year=${year.trim()}`;
-    }
+    // if (year.trim()) {
+    //   url += `?year=${year.trim()}`;
+    // }
 
-    const payload = selectedFolderId ? { folderId: selectedFolderId } : {};
-    const res = await API.post(url, payload);
-    console.log(res.data);
+    // const payload = selectedFolderId ? { folderId: selectedFolderId } : {};
+    const res = await API.post('/auth/postMovie', payload);
     toast.success(res.data.msg)
   } catch (err) {
     console.log(err);

@@ -339,6 +339,36 @@
   pointer-events: none;
 } */
 
+/* --- Search Filter Styles --- */
+.search-filter-container {
+  flex: 1;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-filter-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.search-filter-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.search-filter-input::placeholder {
+  color: var(--label-color);
+}
+
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {
   .liked-movie-list {
