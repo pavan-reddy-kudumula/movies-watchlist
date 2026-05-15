@@ -1,11 +1,12 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ],
-  "routes": [
     {
-      "src": "/sitemap.xml",
-      "dest": "https://movies-watchlist-ri2x.onrender.com/sitemap.xml"
+      "source": "/sitemap.xml",
+      "destination": "https://movies-watchlist-ri2x.onrender.com/sitemap.xml"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
