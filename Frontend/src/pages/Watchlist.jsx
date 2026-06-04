@@ -1,4 +1,5 @@
 import API from "../api";
+import { getApiErrorMessage } from "../api";
 import { useEffect, useMemo, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
@@ -210,6 +211,7 @@ export default function Watchlist() {
         setMovies(res.data.movies);
       } catch (err) {
         console.error("Error fetching movies:", err);
+        toast.error(getApiErrorMessage(err, "Failed to load watchlist"));
       } finally {
         setIsLoading(false);
       }
@@ -263,7 +265,7 @@ export default function Watchlist() {
       }
     } catch (err) {
       console.error("Error deleting movie:", err);
-      toast.error("Failed to delete movie");
+      toast.error(getApiErrorMessage(err, "Failed to delete movie"));
     } finally {
       setIsDeleting(false);
       // Close modal
@@ -290,6 +292,7 @@ export default function Watchlist() {
       toggleSelectionMode(); // Exit selection mode
     } catch (err) {
       console.error("Error refreshing movies:", err);
+      toast.error(getApiErrorMessage(err, "Failed to refresh watchlist"));
     }
   };
 

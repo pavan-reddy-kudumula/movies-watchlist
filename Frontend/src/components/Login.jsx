@@ -1,6 +1,6 @@
 import {useState, useContext} from "react"
 import { useNavigate, Link, Navigate } from "react-router-dom";
-import API from "../api"
+import API, { getApiErrorMessage } from "../api"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { AuthContext } from "../context/AuthContext"
@@ -26,7 +26,7 @@ function Login(){
         }
         catch(err){
             console.error(err)
-            const backendMsg = err.response?.data?.msg || "Login failed. Try again.";
+            const backendMsg = getApiErrorMessage(err, "Login failed. Try again.");
             setError(backendMsg);
             toast.error(backendMsg);
         }

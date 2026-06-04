@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import API from '../api';
+import API, { getApiErrorMessage } from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -39,7 +39,7 @@ function Recommendations() {
             const response = await API.get('/auth/recommendations');
             setRecommendations(response.data.recommendations);
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Could not fetch recommendations.';
+            const errorMsg = getApiErrorMessage(err, 'Could not fetch recommendations.');
             setError(errorMsg);
             console.error(err);
         } finally {
@@ -54,7 +54,7 @@ function Recommendations() {
             toast.success(`"${title}" was added to your watchlist!`);
             setAddedMovies(prevAdded => [...prevAdded, title]);
         } catch (err) {
-            const errorMsg = err.response?.data?.msg || `Failed to add "${title}"`;
+            const errorMsg = getApiErrorMessage(err, `Failed to add "${title}"`);
             toast.error(errorMsg);
         } finally {
             setAddingMovieTitle(null);

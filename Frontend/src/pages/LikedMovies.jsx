@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import API from "../api";
+import API, { getApiErrorMessage } from "../api";
 import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -215,7 +215,7 @@ function LikedMovies() {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to remove movie");
+      toast.error(getApiErrorMessage(err, "Failed to remove movie"));
     } finally {
       setIsDeleting(false);
       setModalConfig({ isOpen: false, localId: null, movieTitle: "" });
@@ -236,7 +236,7 @@ function LikedMovies() {
       toast.success("Review updated! 📝");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to update review");
+      toast.error(getApiErrorMessage(err, "Failed to update review"));
     }
   };
 
@@ -259,6 +259,7 @@ function LikedMovies() {
       toggleSelectionMode(); // Exit selection mode
     } catch (err) {
       console.error("Error refreshing liked movies:", err);
+      toast.error(getApiErrorMessage(err, "Failed to refresh favorites"));
     }
   };
 

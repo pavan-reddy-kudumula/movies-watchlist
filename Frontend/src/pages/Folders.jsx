@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import API from "../api";
+import API, { getApiErrorMessage } from "../api";
 import { AuthContext } from "../context/AuthContext";
 import "./Folders.css";
 import { Trash2, Pencil } from "lucide-react";
@@ -97,7 +97,7 @@ function Folders() {
         await refreshData();
       } catch (err) {
         console.error("Failed loading folders page", err);
-        toast.error("Failed to load folders");
+        toast.error(getApiErrorMessage(err, "Failed to load folders"));
       } finally {
         setLoading(false);
       }
@@ -130,7 +130,7 @@ function Folders() {
         await fetchFolderItems(selectedFolderId);
       } catch (err) {
         console.error("Failed loading folder items", err);
-        toast.error("Failed to load folder items");
+        toast.error(getApiErrorMessage(err, "Failed to load folder items"));
       }
     };
 
@@ -193,7 +193,7 @@ function Folders() {
         setSelectedFolderId(createdFolder.id);
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not create folder");
+      toast.error(getApiErrorMessage(err, "Could not create folder"));
     }
   };
 
@@ -226,7 +226,7 @@ function Folders() {
       toast.success("Folder renamed");
       cancelRename();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not rename folder");
+      toast.error(getApiErrorMessage(err, "Could not rename folder"));
     }
   };
 
@@ -269,7 +269,7 @@ function Folders() {
 
       await Promise.all([fetchWatchlistMovies(), fetchLikedMovies()]);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not delete folder");
+      toast.error(getApiErrorMessage(err, "Could not delete folder"));
     }
   };
 
@@ -296,7 +296,7 @@ function Folders() {
 
       await Promise.all([fetchWatchlistMovies(), fetchLikedMovies(), fetchFolderItems(selectedFolderId)]);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not add items");
+      toast.error(getApiErrorMessage(err, "Could not add items"));
     }
   };
 
@@ -325,7 +325,7 @@ function Folders() {
 
       await Promise.all([fetchWatchlistMovies(), fetchLikedMovies(), fetchFolderItems(selectedFolderId)]);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not remove items");
+      toast.error(getApiErrorMessage(err, "Could not remove items"));
     }
   };
 

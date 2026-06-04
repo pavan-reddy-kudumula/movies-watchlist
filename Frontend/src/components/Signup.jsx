@@ -1,5 +1,5 @@
 import {useState, useContext} from "react"
-import API from "../api"
+import API, { getApiErrorMessage } from "../api"
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {useNavigate, Link, Navigate} from "react-router-dom"
@@ -27,7 +27,7 @@ function Signup(){
         }
         catch(err){
             console.log(err)
-            const backendMsg = err.response?.data?.msg || "Signup failed. Try again.";
+            const backendMsg = getApiErrorMessage(err, "Signup failed. Try again.");
             setError(backendMsg);
             toast.error(backendMsg);
         } 

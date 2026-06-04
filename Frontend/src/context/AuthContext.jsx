@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import API from "../api";
+import { toast } from "react-toastify";
+import API, { getApiErrorMessage } from "../api";
 
 export const AuthContext = createContext();
 
@@ -22,6 +23,9 @@ export default function AuthProvider({ children }) {
       setUserFolders(folderRes.data.folders);
     } catch (err) {
       console.error("Failed to fetch user data:", err);
+      if (err?.response?.status === 503) {
+        toast.error(getApiErrorMessage(err, "Database temporarily unavailable"));
+      }
       setUser(null);
       setLikedMovies([]);
       setUserFolders([]);

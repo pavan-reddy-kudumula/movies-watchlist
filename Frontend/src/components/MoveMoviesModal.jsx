@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../api";
+import API, { getApiErrorMessage } from "../api";
 import { toast } from "react-toastify";
 import "./MoveMoviesModal.css";
 
@@ -53,7 +53,7 @@ const MoveMoviesModal = ({
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || "Failed to move movies");
+      toast.error(getApiErrorMessage(err, "Failed to move movies"));
     } finally {
       setIsMoving(false);
     }

@@ -1,4 +1,4 @@
-import API from "../api"
+import API, { getApiErrorMessage } from "../api"
 import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from "../context/AuthContext"
 import { Navigate } from "react-router-dom";
@@ -27,6 +27,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error("Failed to load folders", err);
+      toast.error(getApiErrorMessage(err, "Failed to load folders"));
     }
   };
 
@@ -54,7 +55,7 @@ const addMovie = async () => {
     toast.success(res.data.msg)
   } catch (err) {
     console.log(err);
-    toast.error(err.response?.data?.msg)
+    toast.error(getApiErrorMessage(err, "Failed to add movie"))
   } finally {
     setIsAdding(false)
     setinputText("")
